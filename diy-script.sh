@@ -29,6 +29,14 @@ function git_sparse_clone() {
   cd .. && rm -rf $repodir
 }
 
+# 我的
+git clone --depth=1 https://github.com/kiddin9/openwrt-packages /tmp/kiddin9_openwrt-packages
+# v2raya
+cp -r /tmp/kiddin9_openwrt-packages/luci-app-v2raya package/luci-app-v2raya
+cp -r /tmp/kiddin9_openwrt-packages/v2raya package/v2raya
+# syncthing
+# cp -r /tmp/kiddin9_openwrt-packages/luci-app-syncthing package/luci-app-syncthing
+
 # 添加额外插件
 git clone --depth=1 https://github.com/kongfl888/luci-app-adguardhome package/luci-app-adguardhome
 git clone --depth=1 -b openwrt-18.06 https://github.com/tty228/luci-app-wechatpush package/luci-app-serverchan

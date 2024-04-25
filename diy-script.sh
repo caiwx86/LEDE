@@ -34,6 +34,7 @@ git clone --depth=1 https://github.com/kiddin9/openwrt-packages /tmp/kiddin9_ope
 # v2raya
 cp -r /tmp/kiddin9_openwrt-packages/luci-app-v2raya package/luci-app-v2raya
 cp -r /tmp/kiddin9_openwrt-packages/v2raya package/v2raya
+rm -rf package/luci-app-ssr-plus
 # syncthing
 # cp -r /tmp/kiddin9_openwrt-packages/luci-app-syncthing package/luci-app-syncthing
 

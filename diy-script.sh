@@ -30,12 +30,13 @@ function git_sparse_clone() {
 }
 
 # 我的
+rm -rf package/luci-app-ssr-plus
 git clone --depth=1 https://github.com/kiddin9/openwrt-packages /tmp/kiddin9_openwrt-packages
 # v2raya
-git clone --depth=1 https://github.com/v2rayA/v2raya-openwrt /tmp/v2raya_openwrt-packages
-cp -r /tmp/v2raya_openwrt-packages/luci-app-v2raya package/luci-app-v2raya
-cp -r /tmp/v2raya_openwrt-packages/v2raya package/v2raya
-cp -r /tmp/v2raya_openwrt-packages/xray-core package/xray-core
+# git clone --depth=1 https://github.com/v2rayA/v2raya-openwrt /tmp/v2raya_openwrt-packages
+# cp -r /tmp/v2raya_openwrt-packages/luci-app-v2raya package/luci-app-v2raya
+# cp -r /tmp/v2raya_openwrt-packages/v2raya package/v2raya
+# cp -r /tmp/v2raya_openwrt-packages/xray-core package/xray-core
 # syncthing
 cp -r /tmp/kiddin9_openwrt-packages/luci-app-syncthing package/luci-app-syncthing
 

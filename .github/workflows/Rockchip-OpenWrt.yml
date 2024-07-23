@@ -222,7 +222,7 @@ jobs:
     - name: Download Armvirt Firmware
       id: download
       run: |
-        FIRMWARE_PATH=openwrt/bin/targets/armvirt/64
+        FIRMWARE_PATH=openwrt/bin/targets/rockchip/armv8
         [ -d $FIRMWARE_PATH ] || mkdir -p $FIRMWARE_PATH
         cd $FIRMWARE_PATH
         wget -q $(curl -s "https://api.github.com/repos/$GITHUB_REPOSITORY/releases" | grep "$FIRMWARE_TAG.*rootfs.tar.gz" | awk -F '"' '{print $4}')

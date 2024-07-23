@@ -135,7 +135,6 @@ find package/luci-theme-*/* -type f -name '*luci-theme-*' -print -exec sed -i '/
 
 # DNSMASQ DNSSERVER
 sed -i 's/DNS_SERVERS=\"\"/DNS_SERVERS=\"223.5.5.5 8.8.4.4\"/g' package/network/services/dnsmasq/files/dnsmasq.init
-sed -i "/^config dnsmasq/a\ \tlist server '127.0.0.1#1753' # SmartDNS的监听端口" package/network/services/dnsmasq/files/dhcp.conf 
 
 ./scripts/feeds update -a
 ./scripts/feeds install -a

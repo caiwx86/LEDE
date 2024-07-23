@@ -115,7 +115,6 @@ jobs:
         $GITHUB_WORKSPACE/scripts/preset-clash-core.sh $CLASH_KERNEL
         $GITHUB_WORKSPACE/scripts/preset-terminal-tools.sh
         $GITHUB_WORKSPACE/scripts/preset-adguard-core.sh $CLASH_KERNEL
-        $GITHUB_WORKSPACE/scripts/preset-custom.sh
 
     - name: Download DL Package
       run: |

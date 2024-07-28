@@ -9,17 +9,6 @@ sed -i '/REDIRECT --to-ports 53/d' /etc/firewall.user
 echo "iptables -t nat -A PREROUTING -p udp --dport 53 -j REDIRECT --to-ports 53" >> /etc/firewall.user
 echo "iptables -t nat -A PREROUTING -p tcp --dport 53 -j REDIRECT --to-ports 53" >> /etc/firewall.user
 
-#系统时区设置
-uci set system.@system[0].timezone=CST-8
-uci set system.@system[0].zonename=Asia/Shanghai
-uci commit system
-
-#系统温度调整
-uci set glfan.@globals[0].temperature='60'
-uci set glfan.@globals[0].intergration='4'
-uci set glfan.@globals[0].differential='20'
-uci commit glfan
-
 #设置fstab开启热插拔自动挂载
 uci set fstab.@global[0].anon_mount=1
 uci commit fstab

@@ -33,6 +33,17 @@ function git_sparse_clone() {
 }
 
 # 我的
+# 移除不需要的包
+# KMS
+rm -rf feeds/luci/applications/luci-app-vlmcsd
+# 上网时间控制
+rm -rf feeds/luci/applications/luci-app-accesscontrol
+# DDNS
+rm -rf feeds/luci/applications/luci-app-ddns
+# UPNP
+rm -rf feeds/luci/applications/luci-app-upnp
+# 网络唤醒
+rm -rf feeds/luci/applications/luci-app-wol
 rm -rf package/luci-app-ssr-plus
 git clone --depth=1 https://github.com/kiddin9/openwrt-packages /tmp/kiddin9_openwrt-packages
 # v2raya
@@ -138,6 +149,11 @@ find package/luci-theme-*/* -type f -name '*luci-theme-*' -print -exec sed -i '/
 
 # DNSMASQ DNSSERVER
 sed -i 's/DNS_SERVERS=\"\"/DNS_SERVERS=\"223.5.5.5 8.8.4.4\"/g' package/network/services/dnsmasq/files/dnsmasq.init
+# 调整 Docker 到 服务 菜单
+sed -i 's/"admin"/"admin", "services"/g' feeds/luci/applications/luci-app-dockerman/luasrc/controller/*.lua
+sed -i 's/"admin"/"admin", "services"/g; s/admin\//admin\/services\//g' feeds/luci/applications/luci-app-dockerman/luasrc/model/cbi/dockerman/*.lua
+sed -i 's/admin\//admin\/services\//g' feeds/luci/applications/luci-app-dockerman/luasrc/view/dockerman/*.htm
+sed -i 's|admin\\|admin\\/services\\|g' feeds/luci/applications/luci-app-dockerman/luasrc/view/dockerman/container.htm
 
 ./scripts/feeds update -a
 ./scripts/feeds install -a

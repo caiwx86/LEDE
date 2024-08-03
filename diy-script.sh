@@ -149,7 +149,8 @@ rm -rf package/luci-app-ssr-plus
 
 #修改luci-app-adguardhome配置config文件
 sed -i "s|option workdir '/usr/bin/AdGuardHome'|option workdir '/opt/appdata/AdGuardHome'|" package/luci-app-adguardhome/root/etc/config/AdGuardHome
-git_sparse_clone master https://github.com/kiddin9/openwrt-packages luci-app-syncthing luci-app-v2raya v2raya xray-core
+git_sparse_clone master https://github.com/kiddin9/openwrt-packages luci-app-syncthing luci-app-xray v2raya xray-core
+git_sparse_clone master https://github.com/v2rayA/v2raya-openwrt luci-app-v2raya v2fly-geodata
 
 # DNSMASQ DNSSERVER
 sed -i 's/DNS_SERVERS=\"\"/DNS_SERVERS=\"223.5.5.5 8.8.4.4\"/g' package/network/services/dnsmasq/files/dnsmasq.init

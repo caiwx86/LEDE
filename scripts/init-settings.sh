@@ -50,4 +50,8 @@ else
 fi
 #/etc/init.d/cron start
 #/etc/init.d/cron enable
+# v2raya
+# For advanced usage, please see /etc/config/v2raya
+uci set v2raya.config.enabled='1'
+uci commit v2raya
 exit 0

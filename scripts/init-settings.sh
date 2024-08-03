@@ -4,6 +4,8 @@
 uci set luci.main.mediaurlbase='/luci-static/argon'
 uci commit luci
 
+# 添加旁路由防火墙
+# echo "iptables -t nat -I POSTROUTING -o eth0 -j MASQUERADE" >> package/network/config/firewall/files/firewall.user
 #iptables设置
 sed -i '/REDIRECT --to-ports 53/d' /etc/firewall.user
 echo "iptables -t nat -A PREROUTING -p udp --dport 53 -j REDIRECT --to-ports 53" >> /etc/firewall.user
@@ -34,4 +36,18 @@ uci commit fstab
 # uci set fstab.@global[0].check_fs=1
 # uci commit fstab
 
+chmod +x /usr/bin/adguard_update_dhcp_leases.sh
+# 定义要查找的Cron任务
+CRON_JOB="* * * * * /usr/bin/adguard_update_dhcp_leases.sh"
+# 定义cron文件路径
+CRON_FILE="/etc/crontabs/root"
+# 检查Cron任务是否已存在
+if grep -Fxq "$CRON_JOB" "$CRON_FILE"; then
+    echo "Cron任务已存在，不需要添加。"
+else
+    echo "$CRON_JOB" >> "$CRON_FILE"
+    echo "Cron任务已添加到 $CRON_FILE。"
+fi
+#/etc/init.d/cron start
+#/etc/init.d/cron enable
 exit 0

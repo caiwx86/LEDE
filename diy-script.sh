@@ -34,28 +34,6 @@ function git_sparse_clone() {
   cd .. && rm -rf $repodir
 }
 
-# 我的
-# 移除不需要的包
-# KMS
-rm -rf feeds/luci/applications/luci-app-vlmcsd
-# 上网时间控制
-rm -rf feeds/luci/applications/luci-app-accesscontrol
-# DDNS
-rm -rf feeds/luci/applications/luci-app-ddns
-# UPNP
-rm -rf feeds/luci/applications/luci-app-upnp
-# 网络唤醒
-rm -rf feeds/luci/applications/luci-app-wol
-rm -rf package/luci-app-ssr-plus
-git clone --depth=1 https://github.com/kiddin9/openwrt-packages /tmp/kiddin9_openwrt-packages
-# v2raya
-# git clone --depth=1 https://github.com/v2rayA/v2raya-openwrt /tmp/v2raya_openwrt-packages
-# cp -r /tmp/v2raya_openwrt-packages/luci-app-v2raya package/luci-app-v2raya
-# cp -r /tmp/v2raya_openwrt-packages/v2raya package/v2raya
-# cp -r /tmp/v2raya_openwrt-packages/xray-core package/xray-core
-# syncthing
-cp -r /tmp/kiddin9_openwrt-packages/luci-app-syncthing package/luci-app-syncthing
-
 # 添加额外插件
 git clone --depth=1 https://github.com/kongfl888/luci-app-adguardhome package/luci-app-adguardhome
 git clone --depth=1 -b openwrt-18.06 https://github.com/tty228/luci-app-wechatpush package/luci-app-serverchan
@@ -145,17 +123,36 @@ find package/*/ -maxdepth 2 -path "*/Makefile" | xargs -i sed -i 's/PKG_SOURCE_U
 find package/luci-theme-*/* -type f -name '*luci-theme-*' -print -exec sed -i '/set luci.main.mediaurlbase/d' {} \;
 
 # 调整 V2ray服务器 到 VPN 菜单
-sed -i 's/services/vpn/g' feeds/luci/applications/luci-app-v2ray-server/luasrc/controller/*.lua
-sed -i 's/services/vpn/g' feeds/luci/applications/luci-app-v2ray-server/luasrc/model/cbi/v2ray_server/*.lua
-sed -i 's/services/vpn/g' feeds/luci/applications/luci-app-v2ray-server/luasrc/view/v2ray_server/*.htm
+#sed -i 's/services/vpn/g' feeds/luci/applications/luci-app-v2ray-server/luasrc/controller/*.lua
+#sed -i 's/services/vpn/g' feeds/luci/applications/luci-app-v2ray-server/luasrc/model/cbi/v2ray_server/*.lua
+#sed -i 's/services/vpn/g' feeds/luci/applications/luci-app-v2ray-server/luasrc/view/v2ray_server/*.htm
 
-# DNSMASQ DNSSERVER
-sed -i 's/DNS_SERVERS=\"\"/DNS_SERVERS=\"223.5.5.5 8.8.4.4\"/g' package/network/services/dnsmasq/files/dnsmasq.init
 # 调整 Docker 到 服务 菜单
 sed -i 's/"admin"/"admin", "services"/g' feeds/luci/applications/luci-app-dockerman/luasrc/controller/*.lua
 sed -i 's/"admin"/"admin", "services"/g; s/admin\//admin\/services\//g' feeds/luci/applications/luci-app-dockerman/luasrc/model/cbi/dockerman/*.lua
 sed -i 's/admin\//admin\/services\//g' feeds/luci/applications/luci-app-dockerman/luasrc/view/dockerman/*.htm
 sed -i 's|admin\\|admin\\/services\\|g' feeds/luci/applications/luci-app-dockerman/luasrc/view/dockerman/container.htm
+
+# 我的
+# 移除不需要的包
+# KMS
+rm -rf feeds/luci/applications/luci-app-vlmcsd
+# 上网时间控制
+rm -rf feeds/luci/applications/luci-app-accesscontrol
+# DDNS
+rm -rf feeds/luci/applications/luci-app-ddns
+# UPNP
+rm -rf feeds/luci/applications/luci-app-upnp
+# 网络唤醒
+rm -rf feeds/luci/applications/luci-app-wol
+rm -rf package/luci-app-ssr-plus
+
+#修改luci-app-adguardhome配置config文件
+sed -i "s|option workdir '/usr/bin/AdGuardHome'|option workdir '/opt/appdata/AdGuardHome'|" package/luci-app-adguardhome/root/etc/config/AdGuardHome
+git_sparse_clone master https://github.com/kiddin9/openwrt-packages luci-app-syncthing luci-app-v2raya v2raya xray-core
+
+# DNSMASQ DNSSERVER
+sed -i 's/DNS_SERVERS=\"\"/DNS_SERVERS=\"223.5.5.5 8.8.4.4\"/g' package/network/services/dnsmasq/files/dnsmasq.init
 
 ./scripts/feeds update -a
 ./scripts/feeds install -a

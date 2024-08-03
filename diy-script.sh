@@ -34,7 +34,7 @@ function git_sparse_clone() {
   cd .. && rm -rf $repodir
 }
 
-# 我的
+# 我的 START
 # 移除不需要的包
 # KMS
 rm -rf feeds/luci/applications/luci-app-vlmcsd
@@ -57,6 +57,7 @@ git_sparse_clone master https://github.com/kiddin9/openwrt-packages luci-app-syn
 mkdir -p files/usr/share/xray
 wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat  -O files/usr/share/xray/geoip.dat
 wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat -O files/usr/share/xray/geosite.dat
+## 我的 END
 
 # 添加额外插件
 git clone --depth=1 https://github.com/kongfl888/luci-app-adguardhome package/luci-app-adguardhome
@@ -71,10 +72,10 @@ git_sparse_clone openwrt-18.06 https://github.com/immortalwrt/luci applications/
 
 # 科学上网插件
 git clone --depth=1 -b main https://github.com/fw876/helloworld package/luci-app-ssr-plus
-#git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall-packages package/openwrt-passwall
-#git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall package/luci-app-passwall
-#git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall2 package/luci-app-passwall2
-#git_sparse_clone master https://github.com/vernesong/OpenClash luci-app-openclash
+git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall-packages package/openwrt-passwall
+git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall package/luci-app-passwall
+git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall2 package/luci-app-passwall2
+git_sparse_clone master https://github.com/vernesong/OpenClash luci-app-openclash
 
 # Themes
 git clone --depth=1 -b 18.06 https://github.com/kiddin9/luci-theme-edge package/luci-theme-edge

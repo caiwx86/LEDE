@@ -27,33 +27,26 @@ function git_sparse_clone() {
   cd .. && rm -rf $repodir
 }
 
-# v2raya 
-git clone --depth=1 -b master https://github.com/zxlhhyccc/luci-app-v2raya package/luci-app-v2raya
-# xray
-git_sparse_clone main https://github.com/kenzok8/small-package luci-app-bypass uugamebooster v2raya xray-core hysteria
-mkdir -p files/usr/share/xray
-wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat  -O files/usr/share/xray/geoip.dat
-wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat -O files/usr/share/xray/geosite.dat
-
 # 添加额外插件
 git clone --depth=1 https://github.com/kongfl888/luci-app-adguardhome package/luci-app-adguardhome
 #git clone --depth=1 https://github.com/xptsp/luci-app-adguardhome package/luci-app-adguardhome
 git clone --depth=1 https://github.com/esirplayground/luci-app-poweroff package/luci-app-poweroff
 git_sparse_clone openwrt-23.05 https://github.com/immortalwrt/luci applications/luci-app-eqos luci-app-filebrowser
+git_sparse_clone main https://github.com/kenzok8/small-package luci-app-syncthing  uugamebooster
 
 # 科学上网插件
-# git clone --depth=1 -b main https://github.com/fw876/helloworld package/luci-app-ssr-plus
-git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall-packages package/openwrt-passwall
-git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall package/luci-app-passwall
-# git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall2 package/luci-app-passwall2
-# git_sparse_clone master https://github.com/vernesong/OpenClash luci-app-openclash
+# passwall passwall2 xray v2raya mosdns bypass
+git clone --depth=1 -b master https://github.com/kenzok8/small package/luci-app-passwall
+# v2raya 
+git clone --depth=1 -b master https://github.com/zxlhhyccc/luci-app-v2raya package/luci-app-v2raya
+# xray
+mkdir -p files/usr/share/xray
+wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat  -O files/usr/share/xray/geoip.dat
+wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat -O files/usr/share/xray/geosite.dat
 
 # SmartDNS
 git clone --depth=1 -b master https://github.com/pymumu/luci-app-smartdns package/luci-app-smartdns
 git clone --depth=1 https://github.com/pymumu/openwrt-smartdns package/smartdns
-
-# MosDNS
-git clone --depth=1 -b v5 https://github.com/sbwml/luci-app-mosdns package/luci-app-mosdns
 
 # Themes
 git clone --depth=1 -b master https://github.com/jerrykuku/luci-theme-argon package/luci-theme-argon

@@ -36,7 +36,8 @@ wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/ge
 wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat -O files/usr/share/xray/geosite.dat
 
 # 添加额外插件
-git clone --depth=1 https://github.com/xptsp/luci-app-adguardhome package/luci-app-adguardhome
+git clone --depth=1 https://github.com/kongfl888/luci-app-adguardhome package/luci-app-adguardhome
+#git clone --depth=1 https://github.com/xptsp/luci-app-adguardhome package/luci-app-adguardhome
 git clone --depth=1 https://github.com/esirplayground/luci-app-poweroff package/luci-app-poweroff
 git_sparse_clone openwrt-23.05 https://github.com/immortalwrt/luci applications/luci-app-eqos luci-app-filebrowser
 

@@ -30,7 +30,7 @@ function git_sparse_clone() {
 # v2raya 
 git clone --depth=1 -b master https://github.com/zxlhhyccc/luci-app-v2raya package/luci-app-v2raya
 # xray
-git_sparse_clone main https://github.com/kenzok8/small-package uugamebooster v2raya xray-core
+git_sparse_clone main https://github.com/kenzok8/small-package uugamebooster v2raya xray-core hysteria
 mkdir -p files/usr/share/xray
 wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat  -O files/usr/share/xray/geoip.dat
 wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat -O files/usr/share/xray/geosite.dat

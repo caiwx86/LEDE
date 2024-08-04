@@ -1,10 +1,9 @@
 #!/bin/bash
 
-# https://github.com/coolsnowwolf/lede/commits/master/include/kernel-5.4
-# git checkout cd3fe52be6c3ce6b05b857d44a725b19e8be2b97
-git reset --hard 5e947a9df963727ceedd041d9d02bf1d30802a03 
+# https://github.com/coolsnowwolf/lede/commits/master/include/kernel-5.15
+git reset --hard 330337a64451fe229acdcaaab094677c627fb947 
 # 替换内核
-sed -i 's/KERNEL_PATCHVER:=*.*/KERNEL_PATCHVER:=5.4/g' target/linux/rockchip/Makefile
+sed -i 's/KERNEL_PATCHVER:=*.*/KERNEL_PATCHVER:=5.15/g' target/linux/rockchip/Makefile
 
 # 修改默认IP
 sed -i 's/192.168.1.1/10.0.10.1/g' package/base-files/files/bin/config_generate

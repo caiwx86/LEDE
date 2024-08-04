@@ -30,14 +30,14 @@ function git_sparse_clone() {
 # v2raya 
 git clone --depth=1 -b master https://github.com/zxlhhyccc/luci-app-v2raya package/luci-app-v2raya
 # xray
-git_sparse_clone main https://github.com/kenzok8/small-package uugamebooster v2raya xray-core hysteria
+git_sparse_clone main https://github.com/kenzok8/small-package luci-app-bypass uugamebooster v2raya xray-core hysteria
 mkdir -p files/usr/share/xray
 wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat  -O files/usr/share/xray/geoip.dat
 wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat -O files/usr/share/xray/geosite.dat
 
 # 添加额外插件
 git clone --depth=1 https://github.com/xptsp/luci-app-adguardhome package/luci-app-adguardhome
-# git clone --depth=1 https://github.com/esirplayground/luci-app-poweroff package/luci-app-poweroff
+git clone --depth=1 https://github.com/esirplayground/luci-app-poweroff package/luci-app-poweroff
 git_sparse_clone openwrt-23.05 https://github.com/immortalwrt/luci applications/luci-app-eqos luci-app-filebrowser
 
 # 科学上网插件
@@ -59,9 +59,9 @@ git clone --depth=1 -b master https://github.com/jerrykuku/luci-theme-argon pack
 git clone --depth=1 -b master https://github.com/jerrykuku/luci-app-argon-config package/luci-app-argon-config
 
 # 在线用户
-#git_sparse_clone main https://github.com/haiibo/packages luci-app-onliner
-#sed -i '$i uci set nlbwmon.@nlbwmon[0].refresh_interval=2s' package/lean/default-settings/files/zzz-default-settings
-#sed -i '$i uci commit nlbwmon' package/lean/default-settings/files/zzz-default-settings
-#chmod 755 package/luci-app-onliner/root/usr/share/onliner/setnlbw.sh
+git_sparse_clone main https://github.com/haiibo/packages luci-app-onliner
+sed -i '$i uci set nlbwmon.@nlbwmon[0].refresh_interval=2s' package/lean/default-settings/files/zzz-default-settings
+sed -i '$i uci commit nlbwmon' package/lean/default-settings/files/zzz-default-settings
+chmod 755 package/luci-app-onliner/root/usr/share/onliner/setnlbw.sh
 
 # execute diy-script.sh

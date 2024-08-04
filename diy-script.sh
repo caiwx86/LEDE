@@ -46,7 +46,6 @@ rm -rf feeds/luci/applications/luci-app-ddns
 rm -rf feeds/luci/applications/luci-app-upnp
 # 网络唤醒
 rm -rf feeds/luci/applications/luci-app-wol
-rm -rf package/luci-app-ssr-plus
 
 #修改luci-app-adguardhome配置config文件
 sed -i "s|option workdir '/usr/bin/AdGuardHome'|option workdir '/opt/appdata/AdGuardHome'|" package/luci-app-adguardhome/root/etc/config/AdGuardHome

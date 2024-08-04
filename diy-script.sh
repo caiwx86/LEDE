@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # https://github.com/coolsnowwolf/lede/commits/master/include/kernel-5.15
-git reset --hard 330337a64451fe229acdcaaab094677c627fb947 
+# git reset --hard 330337a64451fe229acdcaaab094677c627fb947 
 # 替换内核
-sed -i 's/KERNEL_PATCHVER:=*.*/KERNEL_PATCHVER:=5.15/g' target/linux/rockchip/Makefile
+# sed -i 's/KERNEL_PATCHVER:=*.*/KERNEL_PATCHVER:=5.15/g' target/linux/rockchip/Makefile
 
 # 修改默认IP
 sed -i 's/192.168.1.1/10.0.10.1/g' package/base-files/files/bin/config_generate
@@ -46,13 +46,19 @@ rm -rf feeds/luci/applications/luci-app-ddns
 rm -rf feeds/luci/applications/luci-app-upnp
 # 网络唤醒
 rm -rf feeds/luci/applications/luci-app-wol
-
+# uu加速器
+rm -rf feeds/packages/net/uugamebooster
+# remove v2ray-geodata package from feeds (openwrt-22.03 & master)
+rm -rf feeds/packages/net/v2ray-geodata
 #修改luci-app-adguardhome配置config文件
 sed -i "s|option workdir '/usr/bin/AdGuardHome'|option workdir '/opt/appdata/AdGuardHome'|" package/luci-app-adguardhome/root/etc/config/AdGuardHome
 
 # v2ray
 git clone --depth=1 -b 18.06 https://github.com/zxlhhyccc/luci-app-v2raya package/luci-app-v2raya
-git_sparse_clone master https://github.com/kiddin9/openwrt-packages luci-app-syncthing v2raya xray-core
+git_sparse_clone master https://github.com/kiddin9/openwrt-packages luci-app-syncthing
+git_sparse_clone main https://github.com/kenzok8/small-package uugamebooster v2raya xray-core
+git clone --depth=1 https://github.com/sbwml/v2ray-geodata package/v2ray-geodata
+
 mkdir -p files/usr/share/xray
 wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat  -O files/usr/share/xray/geoip.dat
 wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat -O files/usr/share/xray/geosite.dat
@@ -101,7 +107,7 @@ git clone --depth=1 https://github.com/ximiTech/luci-app-msd_lite package/luci-a
 git clone --depth=1 https://github.com/ximiTech/msd_lite package/msd_lite
 
 # MosDNS
-git clone --depth=1 https://github.com/sbwml/luci-app-mosdns package/luci-app-mosdns
+git clone --depth=1 -b v5-lua https://github.com/sbwml/luci-app-mosdns package/luci-app-mosdns
 
 # Alist
 git clone --depth=1 https://github.com/sbwml/luci-app-alist package/luci-app-alist

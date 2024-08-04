@@ -10,8 +10,8 @@ env:
   REPO_BRANCH: master
   CONFIG_FILE: configs/rockchip.config
   EXTRA_CONFIG: configs/extra.config
-  DIY_APPS: luci_23.05_diy-apps.sh
-  DIY_SCRIPT: luci_23.05_diy-script.sh
+  DIY_APPS: diy-apps_luci_23.05.sh
+  DIY_SCRIPT: diy-script.sh
   CLASH_KERNEL: arm64
   CACHE_TOOLCHAIN: true
   UPLOAD_BIN_DIR: false

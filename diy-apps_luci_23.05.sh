@@ -28,14 +28,14 @@ function git_sparse_clone() {
 }
 
 # 添加额外插件
+# docker
+git_sparse_clone https://github.com/lisaac/luci-app-dockerman applications/luci-app-dockerman
 # AdGuardHome
 git clone --depth=1 https://github.com/kongfl888/luci-app-adguardhome package/luci-app-adguardhome
-# 关机
-git clone --depth=1 https://github.com/esirplayground/luci-app-poweroff package/luci-app-poweroff
 # 限速
 git_sparse_clone openwrt-23.05 https://github.com/immortalwrt/luci applications/luci-app-eqos
-# syncthing uugame
-git_sparse_clone master  https://github.com/kiddin9/openwrt-packages luci-app-nps luci-app-syncthing  uugamebooster
+# syncthing turboacc uugame
+git_sparse_clone master  https://github.com/kiddin9/openwrt-packages luci-app-nps luci-app-syncthing luci-app-turboacc uugamebooster
 
 # 科学上网插件
 # passwall passwall2 xray v2raya mosdns bypass

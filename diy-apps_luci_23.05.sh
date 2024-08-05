@@ -37,8 +37,8 @@ git_sparse_clone openwrt-23.05 https://github.com/immortalwrt/luci applications/
 git_sparse_clone master  https://github.com/kiddin9/openwrt-packages luci-app-nps luci-app-syncthing luci-app-turboacc uugamebooster
 
 # 科学上网插件
-# passwall passwall2 xray v2raya mosdns bypass
-git clone --depth=1 -b master https://github.com/kenzok8/small package/luci-app-passwall2
+# passwall passwall2 xray v2raya mosdns
+git clone --depth=1 -b master https://github.com/kenzok8/small package/luci-app-passwall
 # v2raya 
 git clone --depth=1 -b master https://github.com/zxlhhyccc/luci-app-v2raya package/luci-app-v2raya
 

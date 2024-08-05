@@ -15,6 +15,8 @@ rm -rf feeds/luci/applications/luci-app-ddns # UPNP
 rm -rf feeds/luci/applications/luci-app-wol # uu加速器
 rm -rf feeds/packages/net/uugamebooster # remove v2ray-geodata package from feeds (openwrt-22.03 & master)
 rm -rf feeds/packages/net/v2ray-geodata
+rm -rf feeds/luci/luci-app-smartdns
+rm -rf feeds/luci/luci-app-v2raya
 
 # Git稀疏克隆，只克隆指定目录到本地
 function git_sparse_clone() {

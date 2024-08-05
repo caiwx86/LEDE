@@ -12,6 +12,7 @@ rm -rf feeds/luci/applications/luci-app-serverchan
 rm -rf feeds/luci/applications/luci-app-vlmcsd # 上网时间控制
 rm -rf feeds/luci/applications/luci-app-accesscontrol # DDNS
 rm -rf feeds/luci/applications/luci-app-ddns # UPNP
+rm -rf feeds/luci/applications/luci-app-upnp # 网络唤醒
 rm -rf feeds/luci/applications/luci-app-wol # uu加速器
 rm -rf feeds/luci/applications/luci-app-smartdns
 rm -rf feeds/luci/applications/luci-app-v2raya

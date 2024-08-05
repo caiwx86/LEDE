@@ -12,7 +12,6 @@ rm -rf feeds/luci/applications/luci-app-serverchan
 rm -rf feeds/luci/applications/luci-app-vlmcsd # 上网时间控制
 rm -rf feeds/luci/applications/luci-app-accesscontrol # DDNS
 rm -rf feeds/luci/applications/luci-app-ddns # UPNP
-rm -rf feeds/luci/applications/luci-app-upnp # 网络唤醒
 rm -rf feeds/luci/applications/luci-app-wol # uu加速器
 rm -rf feeds/packages/net/uugamebooster # remove v2ray-geodata package from feeds (openwrt-22.03 & master)
 rm -rf feeds/packages/net/v2ray-geodata

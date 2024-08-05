@@ -33,8 +33,6 @@ function git_sparse_clone() {
 git clone --depth=1 https://github.com/lisaac/luci-app-dockerman package/luci-app-dockerman
 # AdGuardHome
 git clone --depth=1 https://github.com/kongfl888/luci-app-adguardhome package/luci-app-adguardhome
-# 限速
-git_sparse_clone openwrt-23.05 https://github.com/immortalwrt/luci applications/luci-app-eqos
 # syncthing turboacc uugame
 git_sparse_clone master  https://github.com/kiddin9/openwrt-packages luci-app-nps luci-app-syncthing luci-app-turboacc uugamebooster
 

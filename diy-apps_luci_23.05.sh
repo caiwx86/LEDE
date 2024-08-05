@@ -45,7 +45,7 @@ git clone --depth=1 -b master https://github.com/zxlhhyccc/luci-app-v2raya packa
 
 # SmartDNS
 git clone --depth=1 -b master https://github.com/pymumu/luci-app-smartdns package/luci-app-smartdns
-git clone --depth=1 https://github.com/pymumu/openwrt-smartdns package/smartdns
+git clone --depth=1 -b master https://github.com/pymumu/openwrt-smartdns package/smartdns
 
 # Themes
 git clone --depth=1 -b master https://github.com/jerrykuku/luci-theme-argon package/luci-theme-argon

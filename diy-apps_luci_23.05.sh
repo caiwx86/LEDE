@@ -30,7 +30,7 @@ function git_sparse_clone() {
 
 # 添加额外插件
 # docker
-git_sparse_clone https://github.com/lisaac/luci-app-dockerman applications/luci-app-dockerman
+git clone --depth=1 https://github.com/lisaac/luci-app-dockerman package/luci-app-dockerman
 # AdGuardHome
 git clone --depth=1 https://github.com/kongfl888/luci-app-adguardhome package/luci-app-adguardhome
 # 限速

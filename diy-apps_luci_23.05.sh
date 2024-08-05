@@ -13,10 +13,10 @@ rm -rf feeds/luci/applications/luci-app-vlmcsd # 上网时间控制
 rm -rf feeds/luci/applications/luci-app-accesscontrol # DDNS
 rm -rf feeds/luci/applications/luci-app-ddns # UPNP
 rm -rf feeds/luci/applications/luci-app-wol # uu加速器
+rm -rf feeds/luci/applications/luci-app-smartdns
+rm -rf feeds/luci/applications/luci-app-v2raya
 rm -rf feeds/packages/net/uugamebooster # remove v2ray-geodata package from feeds (openwrt-22.03 & master)
 rm -rf feeds/packages/net/v2ray-geodata
-rm -rf feeds/luci/luci-app-smartdns
-rm -rf feeds/luci/luci-app-v2raya
 
 # Git稀疏克隆，只克隆指定目录到本地
 function git_sparse_clone() {
@@ -53,9 +53,9 @@ git clone --depth=1 -b master https://github.com/jerrykuku/luci-theme-argon pack
 git clone --depth=1 -b master https://github.com/jerrykuku/luci-app-argon-config package/luci-app-argon-config
 
 # 在线用户
-git_sparse_clone main https://github.com/haiibo/packages luci-app-onliner
-sed -i '$i uci set nlbwmon.@nlbwmon[0].refresh_interval=2s' package/lean/default-settings/files/zzz-default-settings
-sed -i '$i uci commit nlbwmon' package/lean/default-settings/files/zzz-default-settings
-chmod 755 package/luci-app-onliner/root/usr/share/onliner/setnlbw.sh
+#git_sparse_clone main https://github.com/haiibo/packages luci-app-onliner
+#sed -i '$i uci set nlbwmon.@nlbwmon[0].refresh_interval=2s' package/lean/default-settings/files/zzz-default-settings
+#sed -i '$i uci commit nlbwmon' package/lean/default-settings/files/zzz-default-settings
+#chmod 755 package/luci-app-onliner/root/usr/share/onliner/setnlbw.sh
 
 # execute diy-script.sh

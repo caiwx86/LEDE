@@ -15,7 +15,7 @@ env:
   CACHE_TOOLCHAIN: true
   UPLOAD_BIN_DIR: false
   FIRMWARE_RELEASE: true
-  FIRMWARE_TAG: X86_64 Luci 23.05
+  FIRMWARE_TAG: X86_64-Luci-23.05
   TZ: Asia/Shanghai
 
 jobs:

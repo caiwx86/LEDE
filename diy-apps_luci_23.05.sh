@@ -30,12 +30,10 @@ function git_sparse_clone() {
 }
 
 # 添加额外插件
-# docker
-git_sparse_clone master https://github.com/lisaac/luci-app-dockerman applications/
 # AdGuardHome
 git clone --depth=1 https://github.com/kongfl888/luci-app-adguardhome package/luci-app-adguardhome
 # syncthing turboacc uugame
-git_sparse_clone master  https://github.com/kiddin9/openwrt-packages luci-app-nps luci-app-syncthing luci-app-turboacc uugamebooster
+git_sparse_clone master  https://github.com/kiddin9/openwrt-packages luci-app-nps luci-app-docker luci-app-syncthing luci-app-turboacc uugamebooster
 
 # 科学上网插件
 # passwall passwall2 xray v2raya mosdns

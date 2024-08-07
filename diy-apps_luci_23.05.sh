@@ -31,7 +31,7 @@ function git_sparse_clone() {
 
 # 添加额外插件
 # docker
-git clone --depth=1 https://github.com/lisaac/luci-app-dockerman package/luci-app-dockerman
+git_sparse_clone master https://github.com/lisaac/luci-app-dockerman applications/
 # AdGuardHome
 git clone --depth=1 https://github.com/kongfl888/luci-app-adguardhome package/luci-app-adguardhome
 # syncthing turboacc uugame

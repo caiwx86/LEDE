@@ -40,8 +40,6 @@ git_sparse_clone master  https://github.com/kiddin9/openwrt-packages luci-app-np
 # 科学上网插件
 # passwall passwall2 xray v2raya mosdns
 git clone --depth=1 -b master https://github.com/kenzok8/small package/luci-app-passwall
-# v2raya 
-git clone --depth=1 -b master https://github.com/zxlhhyccc/luci-app-v2raya package/luci-app-v2raya
 
 # SmartDNS
 git clone --depth=1 -b master https://github.com/pymumu/luci-app-smartdns package/luci-app-smartdns

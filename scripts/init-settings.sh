@@ -50,12 +50,4 @@ else
 fi
 #/etc/init.d/cron start
 #/etc/init.d/cron enable
-# v2raya
-# For advanced usage, please see /etc/config/v2raya
-[ -s /usr/share/v2ray/geoip.dat ] && mkdir /usr/share/xray
-[ -s /usr/share/v2ray/geoip.dat ] && ln -sf /usr/share/v2ray/geoip.dat /usr/share/xray/geoip.dat
-[ -s /usr/share/v2ray/geosite.dat ] && ln -sf /usr/share/v2ray/geosite.dat /usr/share/xray/geosite.dat
-[ -s /usr/share/v2ray/geosite.dat ] && ln -sf /usr/share/v2ray/geosite.dat /usr/share/xray/LoyalsoldierSite.dat
-# uci set v2raya.config.enabled='1'
-# uci commit v2raya
 exit 0

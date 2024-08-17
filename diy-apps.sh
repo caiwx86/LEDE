@@ -1,4 +1,5 @@
 #!/bin/bash
+echo "execute diy-apps.sh"
 ##  ======该脚本主要是拉取Apps============
 # 移除要替换的包
 rm -rf feeds/packages/net/mosdns

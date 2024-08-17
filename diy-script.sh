@@ -6,8 +6,8 @@
 # sed -i 's/KERNEL_PATCHVER:=*.*/KERNEL_PATCHVER:=5.10/g' target/linux/rockchip/Makefile
 # sed -i 's/KERNEL_TESTING_PATCHVER:=*.*/KERNEL_TESTING_PATCHVER:=5.10/g' target/linux/rockchip/Makefile
 
-# 修复rockchip build error
-sed -i '/^UBOOT_TARGETS := rk3528-evb rk3588-evb/s/^/#/' package/boot/uboot-rk35xx/Makefile
+# hotfix
+bash $GITHUB_WORKSPACE/hotfix.sh
 
 # 修改默认IP
 sed -i 's/192.168.1.1/10.0.10.1/g' package/base-files/files/bin/config_generate

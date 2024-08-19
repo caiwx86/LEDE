@@ -6,6 +6,7 @@ echo "execute hotfix.sh"
 sed -i 's/KERNEL_PATCHVER:=*.*/KERNEL_PATCHVER:=6.6/g' target/linux/rockchip/Makefile
 # sed -i 's/KERNEL_TESTING_PATCHVER:=*.*/KERNEL_TESTING_PATCHVER:=5.10/g' target/linux/rockchip/Makefile
 
+sudo -E apt-get -y where
 # ccache
 ln -sf $(where ccache) /usr/bin/ccache_cc
 

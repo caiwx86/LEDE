@@ -103,9 +103,9 @@ jobs:
         #是否缓存工具链目录
         toolchain: true
         #是否跳过工具链编译
-        skip: true
-        #清空缓存
-        clean: false
+#        skip: true
+#        #清空缓存
+#        clean: false
         mixkey: ${{ env.SOURCE_REPO }}-${{ env.REPO_BRANCH }}-${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}
         prefix: ${{ env.OPENWRT_PATH }}
 

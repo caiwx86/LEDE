@@ -51,6 +51,8 @@ jobs:
         sudo -E systemctl daemon-reload
         sudo -E apt-get -y autoremove --purge
         sudo -E apt-get -y clean
+        # ccache
+        sudo ln -sf /usr/bin/ccache /usr/bin/ccache_cc
         sudo timedatectl set-timezone "$TZ"
 
     - name: Combine Disks

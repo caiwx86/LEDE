@@ -8,7 +8,7 @@ sed -i 's/KERNEL_PATCHVER:=*.*/KERNEL_PATCHVER:=6.6/g' target/linux/rockchip/Mak
 
 sudo -E apt-get -y where
 # ccache
-ln -sf $(where ccache) /usr/bin/ccache_cc
+ln -sf /usr/bin/ccache /usr/bin/ccache_cc
 
 # 修复rockchip build error
 sed -i '/^UBOOT_TARGETS := rk3528-evb rk3588-evb/s/^/#/' package/boot/uboot-rk35xx/Makefile

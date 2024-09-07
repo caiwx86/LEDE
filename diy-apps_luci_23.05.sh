@@ -33,7 +33,7 @@ function git_sparse_clone() {
 # AdGuardHome
 git clone --depth=1 https://github.com/kongfl888/luci-app-adguardhome package/luci-app-adguardhome
 # syncthing turboacc uugame
-git_sparse_clone master  https://github.com/kiddin9/openwrt-packages luci-app-nps luci-app-syncthing luci-app-turboacc
+git_sparse_clone master  https://github.com/kiddin9/openwrt-packages luci-app-dockerman luci-app-nps luci-app-syncthing luci-app-turboacc
 
 # 科学上网插件
 # passwall passwall2 xray v2raya mosdns

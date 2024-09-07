@@ -33,16 +33,15 @@ jobs:
         PACKAGE_SOC: r68s
        # KERNEL_AUTO_LATEST: false
        # KERNEL_REPO_URL: https://github.com/quanjindeng/Actions_OpenWrt-Amlogic/tree/main/kernel
-        KERNEL_REPO_URL: https://github.com/ophub/kernel/tree/main/pub/stable
+       # KERNEL_REPO_URL: https://github.com/ophub/kernel/tree/main/pub/stable
         KERNEL_VERSION_NAME: 6.6.y 
 
     - name: Upload OpenWrt Firmware to Release
       uses: ncipollo/release-action@v1
       with:
-        tag: openwrt_r68s_${{ env.PACKAGED_OUTPUTDATE }}
+        tag: openwrt_r68s_luci_23.05_${{ env.PACKAGED_OUTPUTDATE }}
         artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*
         allowUpdates: true
         token: ${{ secrets.GITHUB_TOKEN }}
         body: |
           自用固件，插件较少！
-          如有其他需求，建议下载全插件版本固件！

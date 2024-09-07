@@ -23,7 +23,7 @@ jobs:
       if: (!cancelled())
       run: |
         [ -d openwrt-armvirt ] || mkdir -p openwrt-armvirt
-        [ -s DOWNLOAD_ARMVIRT ] && wget -q -P openwrt-armvirt https://github.com/${GITHUB_REPOSITORY}/releases/download/Rockchip-Luci-23.05/openwrt-rockchip-armv8-rootfs.tar.gz
+        wget -q -P openwrt-armvirt https://github.com/${GITHUB_REPOSITORY}/releases/download/Rockchip-Luci-23.05/openwrt-rockchip-armv8-rootfs.tar.gz
     
     - name: Package Armvirt as OpenWrt
       uses: unifreq/openwrt_packit@master

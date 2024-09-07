@@ -171,16 +171,6 @@ jobs:
         echo "KERNEL=$(cat *.manifest | grep ^kernel | cut -d- -f2 | tr -d ' ')" >> $GITHUB_ENV
         echo "FIRMWARE_PATH=$PWD" >> $GITHUB_ENV
 
-    - name: package kernel
-      uses: unifreq/openwrt_packit@master
-      env:
-        WHOAMI: deng
-        OPENWRT_ARMVIRT: $OPENWRT_PATH/bin/targets/*/*/*.tar.gz
-        PACKAGE_SOC: r68s
-         # KERNEL_AUTO_LATEST: false
-         # KERNEL_REPO_URL: https://github.com/quanjindeng/Actions_OpenWrt-Amlogic/tree/main/kernel
-        KERNEL_VERSION_NAME: 6.6.y 
-
     - name: Upload Firmware To Artifact
       if: steps.compile.outputs.status == 'success' && env.FIRMWARE_RELEASE != 'true'
       uses: actions/upload-artifact@main

@@ -13,7 +13,7 @@ sed -i 's/\/bin\/ash/\/usr\/bin\/zsh/g' package/base-files/files/etc/passwd
 sed -i 's|/bin/login|/bin/login -f root|g' feeds/packages/utils/ttyd/files/ttyd.config
 
 #修改luci-app-adguardhome配置config文件
-sed -i "s|option workdir '/usr/bin/AdGuardHome'|option workdir '/opt/appdata/AdGuardHome'|" package/luci-app-adguardhome/root/etc/config/AdGuardHome
+# sed -i "s|option workdir '/usr/bin/AdGuardHome'|option workdir '/opt/appdata/AdGuardHome'|" package/luci-app-adguardhome/root/etc/config/AdGuardHome
 
 # 更改 Argon 主题背景
 cp -f $GITHUB_WORKSPACE/images/bg1.jpg package/luci-theme-argon/htdocs/luci-static/argon/img/bg1.jpg

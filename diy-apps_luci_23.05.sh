@@ -31,10 +31,9 @@ function git_sparse_clone() {
 
 # 添加额外插件
 # AdGuardHome
-# git clone --depth=1 https://github.com/kongfl888/luci-app-adguardhome package/luci-app-adguardhome
+git clone --depth=1 https://github.com/kongfl888/luci-app-adguardhome package/luci-app-adguardhome
 # syncthing turboacc uugame
 git_sparse_clone master  https://github.com/kiddin9/openwrt-packages \
-  luci-app-adguardhome \
   luci-app-docker \
   luci-app-nps luci-app-syncthing luci-app-turboacc \
   luci-app-homeassistant luci-lib-taskd taskd luci-lib-xterm luci-app-homebridge

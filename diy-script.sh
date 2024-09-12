@@ -13,6 +13,7 @@ sed -i 's/\/bin\/ash/\/usr\/bin\/zsh/g' package/base-files/files/etc/passwd
 sed -i 's|/bin/login|/bin/login -f root|g' feeds/packages/utils/ttyd/files/ttyd.config
 
 #修改luci-app-adguardhome配置config文件
+mkdir -p files/usr/bin
 cp $GITHUB_WORKSPACE/scripts/adguard_update_dhcp_leases.sh files/usr/bin/adguard_update_dhcp_leases.sh
 sed -i "s|option workdir '/usr/bin/AdGuardHome'|option workdir '/opt/AdGuardHome'|" package/luci-app-adguardhome/root/etc/config/AdGuardHome
 sed -i "s|option configpath '/etc/AdGuardHome.yaml'|option configpath '/opt/AdGuardHome/AdGuardHome.yaml'|" package/luci-app-adguardhome/root/etc/config/AdGuardHome

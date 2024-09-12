@@ -36,9 +36,9 @@ uci commit fstab
 # uci set fstab.@global[0].check_fs=1
 # uci commit fstab
 
-chmod +x /usr/bin/AdGuardHome/adguard_update_dhcp_leases.sh
+chmod +x /usr/bin/adguard_update_dhcp_leases.sh
 # 定义要查找的Cron任务
-CRON_JOB="* * * * * /usr/bin/AdGuardHome/adguard_update_dhcp_leases.sh"
+CRON_JOB="* * * * * /usr/bin/adguard_update_dhcp_leases.sh"
 # 定义cron文件路径
 CRON_FILE="/etc/crontabs/root"
 # 检查Cron任务是否已存在

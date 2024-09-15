@@ -34,7 +34,7 @@ function git_sparse_clone() {
 # git clone --depth=1 https://github.com/kongfl888/luci-app-adguardhome package/luci-app-adguardhome
 # syncthing turboacc uugame
 git_sparse_clone master  https://github.com/kiddin9/openwrt-packages \
-#  luci-app-docker \
+  luci-app-docker \
   adguardhome luci-app-adguardhome \
   luci-app-nps luci-app-syncthing luci-app-turboacc
 #  luci-app-homeassistant luci-lib-taskd taskd luci-lib-xterm

@@ -3,10 +3,10 @@ echo "execute diy-apps_luci_23.05.sh"
 ##  ======该脚本主要是拉取Apps============
 # 移除要替换的包
 rm -rf feeds/packages/net/{mosdns,msd_lite,smartdns,v2ray-geodata,adguardhome}
-rm -rf feeds/luci/themes/{luci-theme-argon,luci-theme-netgear,luci-app-mosdns,luci-app-serverchan}
+rm -rf feeds/luci/themes/{luci-theme-argon,luci-theme-netgear}
 # 移除不需要的包
 rm -rf feeds/luci/applications/{luci-app-vlmcsd,luci-app-accesscontrol,luci-app-ddns,luci-app-upnp,luci-app-wol}
-rm -rf feeds/luci/applications/{luci-app-smartdns,luci-app-v2raya}
+rm -rf feeds/luci/applications/{luci-app-smartdns,luci-app-v2raya,luci-app-mosdns,luci-app-serverchan}
 
 # Git稀疏克隆，只克隆指定目录到本地
 function git_sparse_clone() {

@@ -27,6 +27,9 @@ git_sparse_clone master  https://github.com/kiddin9/openwrt-packages \
 #  luci-app-homeassistant luci-lib-taskd taskd luci-lib-xterm
 #   luci-app-homebridge
 
+# adguardhome
+bash $GITHUB_WORKSPACE/scripts/preset-adguardhome.sh
+
 # 科学上网插件
 # passwall passwall2 xray v2raya mosdns
 git clone --depth=1 -b master https://github.com/kenzok8/small package/luci-app-passwall

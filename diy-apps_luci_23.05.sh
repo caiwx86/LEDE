@@ -18,6 +18,7 @@ rm -rf feeds/luci/applications/luci-app-wol # uu加速器
 rm -rf feeds/luci/applications/luci-app-smartdns
 rm -rf feeds/luci/applications/luci-app-v2raya
 rm -rf feeds/packages/net/v2ray-geodata
+rm -rf feeds/packages/net/adguardhome
 
 # Git稀疏克隆，只克隆指定目录到本地
 function git_sparse_clone() {

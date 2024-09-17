@@ -22,7 +22,7 @@ git_sparse_clone master  https://github.com/kiddin9/openwrt-packages \
   luci-theme-argon luci-app-argon-config \
   smartdns luci-app-smartdns \
   luci-app-docker \
-  adguardhome luci-app-adguardhome \
+  luci-app-adguardhome \
   luci-app-nps luci-app-syncthing luci-app-turboacc
 #  luci-app-homeassistant luci-lib-taskd taskd luci-lib-xterm
 #   luci-app-homebridge

@@ -23,3 +23,5 @@ sed -i 's/admin\/services/admin\/system/g' feeds/luci/applications/luci-app-ttyd
 sed -i 's/admin\/services/admin\/network/g' feeds/luci/applications/luci-app-nlbwmon/root/usr/share/luci/menu.d/*.json
 # 调整 网络共享 到 NAS 菜单
 sed -i 's/admin\/services/admin\/nas/g' feeds/luci/applications/luci-app-samba4/root/usr/share/luci/menu.d/*.json
+# 调整 UPNP 到 网络 菜单
+sed -i 's/admin\/services/admin\/network/g' feeds/luci/applications/luci-app-upnp/root/usr/share/luci/menu.d/*.json

@@ -33,7 +33,3 @@ bash $GITHUB_WORKSPACE/scripts/preset-adguardhome.sh
 # 科学上网插件
 # passwall passwall2 xray v2raya mosdns
 git clone --depth=1 -b master https://github.com/kenzok8/small package/luci-app-passwall
-
-# cpu温度等
-git clone --depth=1 -b openwrt-23.05 https://github.com/sbwml/autocore-arm package/autocore-arm
-echo "CONFIG_PACKAGE_autocore=y" >> $OPENWRT_PATH/.config

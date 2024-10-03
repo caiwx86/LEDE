@@ -18,7 +18,7 @@ function git_sparse_clone() {
 }
 
 # 添加额外插件
-git_sparse_clone master  https://github.com/kiddin9/openwrt-packages \
+git_sparse_clone master  https://github.com/kenzok8/openwrt-packages \
   luci-theme-argon luci-app-argon-config \
   smartdns luci-app-smartdns \
   luci-app-docker \

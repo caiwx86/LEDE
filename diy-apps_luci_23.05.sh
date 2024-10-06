@@ -23,13 +23,13 @@ git_sparse_clone master  https://github.com/kenzok8/openwrt-packages \
   smartdns luci-app-smartdns \
   luci-app-docker \
   luci-app-adguardhome \
-  luci-app-nps luci-app-syncthing luci-app-turboacc
+  luci-app-npc luci-app-syncthing luci-app-turboacc
 #  luci-app-homeassistant luci-lib-taskd taskd luci-lib-xterm
 #   luci-app-homebridge
 
-# adguardhome
-bash $GITHUB_WORKSPACE/scripts/preset-adguardhome.sh
-
 # 科学上网插件
 # passwall passwall2 xray v2raya mosdns
-git clone --depth=1 -b master https://github.com/kenzok8/small package/luci-app-passwall
+git_sparse_clone main https://github.com/caiwx86/openwrt-packages small
+
+# adguardhome
+bash $GITHUB_WORKSPACE/scripts/preset-adguardhome.sh

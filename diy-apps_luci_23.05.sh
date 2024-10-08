@@ -5,7 +5,7 @@ echo "execute diy-apps_luci_23.05.sh"
 rm -rf feeds/luci/themes/{luci-theme-argon,luci-theme-netgear}
 rm -rf feeds/packages/net/{mosdns,msd_lite,smartdns,v2ray-geodata}
 rm -rf feeds/luci/applications/{luci-app-vlmcsd,luci-app-accesscontrol,luci-app-ddns,luci-app-wol}
-rm -rf feeds/luci/applications/{luci-app-smartdns,luci-app-v2raya,luci-app-mosdns,luci-app-serverchan}
+rm -rf feeds/luci/applications/{luci-app-smartdns,luci-app-v2raya,luci-app-mosdns,luci-app-serverchan,luci-app-dockerman}
 
 # Git稀疏克隆，只克隆指定目录到本地
 function git_sparse_clone() {
@@ -21,6 +21,7 @@ function git_sparse_clone() {
 git_sparse_clone small-package  https://github.com/caiwx86/openwrt-packages \
   luci-theme-argon luci-app-argon-config \
   smartdns luci-app-smartdns \
+  luci-app-dockerman \
   luci-app-adguardhome \
   luci-app-npc luci-app-syncthing luci-app-turboacc
 #  luci-app-homeassistant luci-lib-taskd taskd luci-lib-xterm

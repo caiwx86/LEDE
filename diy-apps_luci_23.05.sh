@@ -21,9 +21,10 @@ function git_sparse_clone() {
 git_sparse_clone small-package  https://github.com/caiwx86/openwrt-packages \
   luci-theme-argon luci-app-argon-config \
   smartdns luci-app-smartdns \
-  luci-app-dockerman \
-  luci-app-adguardhome \
-  luci-app-npc luci-app-syncthing luci-app-turboacc
+  luci-app-npc luci-app-syncthing
+#  luci-app-dockerman \
+#  luci-app-turboacc
+#  luci-app-adguardhome \
 #  luci-app-homeassistant luci-lib-taskd taskd luci-lib-xterm
 #   luci-app-homebridge
 

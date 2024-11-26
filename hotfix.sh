@@ -6,7 +6,7 @@ echo "execute hotfix.sh"
 # 修改内核5.10
 sed -i 's/KERNEL_PATCHVER:=*.*/KERNEL_PATCHVER:=6.6/g' target/linux/rockchip/Makefile
 sed -i 's/KERNEL_PATCHVER:=*.*/KERNEL_PATCHVER:=5.10/g' target/linux/x86/Makefile
-rm -rf feeds/packages/lang/php7
+# rm -rf feeds/packages/lang/php7
 # sed -i 's/KERNEL_TESTING_PATCHVER:=*.*/KERNEL_TESTING_PATCHVER:=5.10/g' target/linux/rockchip/Makefile
 
 # 修复rockchip build error

@@ -32,5 +32,8 @@ git_sparse_clone small-package  https://github.com/caiwx86/openwrt-packages \
 # passwall passwall2 xray v2raya mosdns
 git_sparse_clone main https://github.com/caiwx86/openwrt-packages small
 
+# 在线用户
+git_sparse_clone main https://github.com/danchexiaoyang/luci-app-onliner luci-app-onliner 
+
 # adguardhome
 bash $GITHUB_WORKSPACE/scripts/preset-adguardhome.sh

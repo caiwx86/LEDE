@@ -10,7 +10,7 @@ env:
   REPO_BRANCH: master
   CONFIG_FILE: configs/rockchip.config
   EXTRA_CONFIG: configs/extra.config
-  DIY_APPS: diy-apps.sh
+  DIY_APPS: diy-apps_luci_23.05.sh 
   DIY_SCRIPT: diy-script.sh
   CLASH_KERNEL: arm64
   CACHE_TOOLCHAIN: true
@@ -115,9 +115,7 @@ jobs:
         cd $OPENWRT_PATH
         $GITHUB_WORKSPACE/$DIY_APPS
         $GITHUB_WORKSPACE/$DIY_SCRIPT
-        $GITHUB_WORKSPACE/scripts/preset-clash-core.sh $CLASH_KERNEL
         $GITHUB_WORKSPACE/scripts/preset-terminal-tools.sh
-        $GITHUB_WORKSPACE/scripts/preset-adguard-core.sh $CLASH_KERNEL
 
     - name: Download DL Package
       run: |
@@ -133,12 +131,22 @@ jobs:
         cd $OPENWRT_PATH
         mkdir -p files/etc/uci-defaults
         cp $GITHUB_WORKSPACE/scripts/init-settings.sh files/etc/uci-defaults/99-init-settings
-        cp $GITHUB_WORKSPACE/scripts/adguard_update_dhcp_leases.sh files/usr/bin/AdGuardHome/adguard_update_dhcp_leases.sh
         echo -e "$(nproc) thread compile"
         make -j$(nproc) || make -j1 || make -j1 V=s
         echo "status=success" >> $GITHUB_OUTPUT
         echo "DATE=$(date +"%Y-%m-%d %H:%M:%S")" >> $GITHUB_ENV
         echo "FILE_DATE=$(date +"%Y.%m.%d")" >> $GITHUB_ENV
+
+    - name: Package Armvirt as OpenWrt
+      uses: unifreq/openwrt_packit@master
+      env:
+          WHOAMI: Caiwx
+          OPENWRT_ARMVIRT: $OPENWRT_PATH/*-rootfs.tar.gz
+          PACKAGE_SOC: r68s
+         # KERNEL_AUTO_LATEST: false
+         # KERNEL_REPO_URL: https://github.com/quanjindeng/Actions_OpenWrt-Amlogic/tree/main/kernel
+         # KERNEL_REPO_URL: https://github.com/ophub/kernel/tree/main/pub/stable
+          KERNEL_VERSION_NAME: 6.6.y 
 
     - name: Check Space Usage
       if: (!cancelled())

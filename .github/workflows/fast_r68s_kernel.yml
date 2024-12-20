@@ -22,7 +22,7 @@ jobs:
     - name: Package Armvirt as OpenWrt
       uses: unifreq/openwrt_packit@master
       env:
-        WHOAMI: deng
+        WHOAMI: Caiwx
         OPENWRT_ARMVIRT: openwrt-armvirt/*.tar.gz
         PACKAGE_SOC: r68s
        # KERNEL_AUTO_LATEST: false

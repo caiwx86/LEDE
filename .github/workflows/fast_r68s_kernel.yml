@@ -34,7 +34,7 @@ jobs:
       uses: ncipollo/release-action@v1
       with:
         tag: openwrt_r68s_luci_23.05_${{ env.PACKAGED_OUTPUTDATE }}
-        artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*
+        artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*-flippy-*
         allowUpdates: true
         token: ${{ secrets.GITHUB_TOKEN }}
         body: |

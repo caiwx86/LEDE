@@ -164,7 +164,7 @@ jobs:
       uses: unifreq/openwrt_packit@master
       env:
             WHOAMI: Caiwx
-            OPENWRT_ARMVIRT: openwrt-${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}-rootfs.tar.gz
+            OPENWRT_ARMVIRT: ${{ env.FIRMWARE_PATH }}/openwrt-${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}-rootfs.tar.gz
             PACKAGE_SOC: r68s
            # KERNEL_AUTO_LATEST: false
            # KERNEL_REPO_URL: https://github.com/quanjindeng/Actions_OpenWrt-Amlogic/tree/main/kernel

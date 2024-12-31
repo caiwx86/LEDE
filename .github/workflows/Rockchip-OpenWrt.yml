@@ -170,7 +170,7 @@ jobs:
            # KERNEL_AUTO_LATEST: false
            # KERNEL_REPO_URL: https://github.com/quanjindeng/Actions_OpenWrt-Amlogic/tree/main/kernel
            # KERNEL_REPO_URL: https://github.com/ophub/kernel/tree/main/pub/stable
-            KERNEL_VERSION_NAME: 6.6.y 
+           # KERNEL_VERSION_NAME: 6.6.y 
 
     - name: Upload Firmware To Artifact
       if: steps.compile.outputs.status == 'success' && env.FIRMWARE_RELEASE != 'true'

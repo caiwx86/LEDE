@@ -159,8 +159,15 @@ jobs:
         rm -rf packages feeds.buildinfo version.buildinfo
         echo "KERNEL=$(cat *.manifest | grep ^kernel | cut -d- -f2 | tr -d ' ')" >> $GITHUB_ENV
         echo "FIRMWARE_PATH=$PWD" >> $GITHUB_ENV
-        cp openwrt-${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}-rootfs.tar.gz $GITHUB_WORKSPACE
         
+    
+    - name: Clenr Files
+      run: |
+        cd $OPENWRT_PATH/bin/targets/*/*
+        mv openwrt-${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}-rootfs.tar.gz $GITHUB_WORKSPACE
+        rm -rf openwrt-imagebuilder-rockchip-armv8.Linux-x86_64.tar.xz
+        rm -rf openwrt-rockchip-armv8-fastrhino_r68s-ext4-sysupgrade.img.gz
+
     - name: Package Armvirt as OpenWrt
       uses: unifreq/openwrt_packit@master
       env:

@@ -5,7 +5,7 @@ echo "execute diy-apps_luci_23.05.sh"
 rm -rf feeds/luci/themes/{luci-theme-argon,luci-theme-netgear}
 rm -rf feeds/packages/net/{mosdns,smartdns,v2ray-geodata}
 rm -rf feeds/luci/applications/{luci-app-vlmcsd,luci-app-accesscontrol,luci-app-ddns,luci-app-wol,luci-app-kodexplorer}
-rm -rf feeds/luci/applications/{luci-app-smartdns,luci-app-v2raya,luci-app-mosdns,luci-app-serverchan}
+rm -rf feeds/luci/applications/{luci-app-smartdns,luci-app-v2raya,luci-app-mosdns,luci-app-serverchan,luci-app-passwall2}
 
 # Git稀疏克隆，只克隆指定目录到本地
 function git_sparse_clone() {
@@ -31,6 +31,7 @@ git_sparse_clone small-package  https://github.com/caiwx86/openwrt-packages \
 # 科学上网插件
 # passwall passwall2 xray v2raya mosdns
 # git_sparse_clone main https://github.com/caiwx86/openwrt-packages small
+git clone https://github.com/kenzok8/small feeds/packages/small
 
 # 在线用户
 git_sparse_clone main https://github.com/danchexiaoyang/luci-app-onliner luci-app-onliner 

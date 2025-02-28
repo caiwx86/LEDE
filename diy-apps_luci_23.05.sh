@@ -5,7 +5,7 @@ echo "execute diy-apps_luci_23.05.sh"
 rm -rf feeds/luci/themes/{luci-theme-argon,luci-theme-netgear}
 rm -rf feeds/packages/net/{mosdns,smartdns,v2ray-geodata}
 rm -rf feeds/luci/applications/{luci-app-vlmcsd,luci-app-accesscontrol,luci-app-ddns,luci-app-wol,luci-app-kodexplorer}
-rm -rf feeds/luci/applications/{luci-app-smartdns,luci-app-v2raya,luci-app-mosdns,luci-app-serverchan}
+rm -rf feeds/luci/applications/{luci-app-smartdns,luci-app-v2raya,luci-app-mosdns,luci-app-serverchan,luci-app-passwall2}
 
 # Git稀疏克隆，只克隆指定目录到本地
 function git_sparse_clone() {

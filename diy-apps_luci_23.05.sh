@@ -31,7 +31,7 @@ git_sparse_clone small-package  https://github.com/caiwx86/openwrt-packages \
 # 科学上网插件
 # passwall passwall2 xray v2raya mosdns
 # git_sparse_clone main https://github.com/caiwx86/openwrt-packages small
-git clone https://github.com/kenzok8/small feeds/packages/small
+git clone https://github.com/kenzok8/small package/small
 
 # 在线用户
 git_sparse_clone main https://github.com/danchexiaoyang/luci-app-onliner luci-app-onliner 

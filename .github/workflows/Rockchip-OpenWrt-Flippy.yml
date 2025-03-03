@@ -145,13 +145,10 @@ jobs:
         echo "status=success" >> $GITHUB_OUTPUT
         echo "DATE=$(date +"%Y-%m-%d %H:%M:%S")" >> $GITHUB_ENV
         echo "FILE_DATE=$(date +"%Y.%m.%d")" >> $GITHUB_ENV
-        cp bin/targets/*/*/*.tar.gz ./../openwrt-armvirt-64-generic-rootfs.tar.gz
+        cp -v bin/targets/*/*/*.tar.gz ./../openwrt-armvirt-64-generic-rootfs.tar.gz
         rm -rf $OPENWRT_PATH
-        echo du -sh /tmp
-        ls -ls /tmp
-        du -sh /tmp 
         [ -f "openwrt-armvirt-64-generic-rootfs.tar.gz" ] && echo "status=success" >> $GITHUB_OUTPUT
-        df -hT
+        df -h
 
     - name: Package Armvirt as OpenWrt
       if: steps.compile.outputs.status == 'success' && !cancelled()

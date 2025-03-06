@@ -18,10 +18,6 @@ sed -i 's/KERNEL_PATCHVER:=*.*/KERNEL_PATCHVER:=6.6/g' target/linux/rockchip/Mak
 # sed -i 's/admin\//admin\/services\//g' feeds/luci/applications/luci-app-dockerman/luasrc/view/dockerman/*.htm
 # sed -i 's|admin\\|admin\\/services\\|g' feeds/luci/applications/luci-app-dockerman/luasrc/view/dockerman/container.htm
 
-#编译新版Sing-box和hysteria，尽量使用golang版本1.22以上版本 ，可以用以下命令
-rm -rf feeds/packages/lang/golang
-git clone https://github.com/kenzok8/golang feeds/packages/lang/golang
-
 # luci23.05
 # 调整 ttyd 到 系统 菜单
 sed -i 's/admin\/services/admin\/system/g' feeds/luci/applications/luci-app-ttyd/root/usr/share/luci/menu.d/*.json

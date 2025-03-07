@@ -49,6 +49,5 @@ find package/luci-theme-*/* -type f -name '*luci-theme-*' -print -exec sed -i '/
 # DNSMASQ DNSSERVER
 sed -i 's/DNS_SERVERS=\"\"/DNS_SERVERS=\"223.5.5.5 8.8.4.4\"/g' package/network/services/dnsmasq/files/dnsmasq.init
 
-git pull
 ./scripts/feeds update -a
 ./scripts/feeds install -a

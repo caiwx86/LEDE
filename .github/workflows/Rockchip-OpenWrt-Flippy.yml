@@ -272,8 +272,7 @@ jobs:
         removeArtifacts: true
         tag: ${{ env.OPENWRT_TAG }}
         token: ${{ secrets.GITHUB_TOKEN }}
-        #artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*
-        artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*-flippy-*
+        artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*
         body: |
           **This is OpenWrt Firmware for Armvirt 64**
           ### 📒 固件信息

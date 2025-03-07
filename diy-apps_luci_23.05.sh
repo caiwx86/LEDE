@@ -26,8 +26,8 @@ git_sparse_clone small-package  https://github.com/caiwx86/openwrt-packages \
 # 科学上网插件
 # passwall passwall2 xray v2raya mosdns
 # git_sparse_clone main https://github.com/caiwx86/openwrt-packages small
-sed -i '1i src-git kenzo https://github.com/kenzok8/openwrt-packages' feeds.conf.default
-sed -i '2i src-git small https://github.com/kenzok8/small' feeds.conf.default
+echo 'src-git kenzo https://github.com/kenzok8/openwrt-packages' >>feeds.conf.default
+echo 'src-git small https://github.com/kenzok8/small' >>feeds.conf.default
 rm -rf feeds/packages/net/{alist,adguardhome,mosdns,xray*,v2ray*,v2ray*,sing*,smartdns}
 rm -rf feeds/packages/utils/v2dat
 

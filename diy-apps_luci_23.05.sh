@@ -33,8 +33,8 @@ git_sparse_clone small-package  https://github.com/caiwx86/openwrt-packages \
 # git_sparse_clone main https://github.com/caiwx86/openwrt-packages small
 sed -i '1i src-git kenzo https://github.com/kenzok8/openwrt-packages' feeds.conf.default
 sed -i '2i src-git small https://github.com/kenzok8/small' feeds.conf.default
-rm -rf feeds/packages/net/{alist,adguardhome,mosdns,xray*,v2ray*,v2ray*,sing*,smartdns}
-rm -rf feeds/packages/utils/v2dat
+# rm -rf feeds/packages/net/{alist,adguardhome,mosdns,xray*,v2ray*,v2ray*,sing*,smartdns}
+# rm -rf feeds/packages/utils/v2dat
 
 # 在线用户
 git_sparse_clone main https://github.com/danchexiaoyang/luci-app-onliner luci-app-onliner 

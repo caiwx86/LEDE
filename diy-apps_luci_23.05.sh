@@ -35,7 +35,7 @@ git_sparse_clone small-package  https://github.com/caiwx86/openwrt-packages \
 # git_sparse_clone main https://github.com/caiwx86/openwrt-packages small
 # sed -i '1i src-git kenzo https://github.com/kenzok8/openwrt-packages' feeds.conf.default
 # sed -i '2i src-git small https://github.com/kenzok8/small' feeds.conf.default
-git clone --depth=1 https://github.com/kenzok8/small package/small 
+git clone --depth=1 https://github.com/kenzok8/small package/small
 
 # 在线用户
 git_sparse_clone main https://github.com/danchexiaoyang/luci-app-onliner luci-app-onliner 

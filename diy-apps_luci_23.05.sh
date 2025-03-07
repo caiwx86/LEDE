@@ -19,12 +19,7 @@ function git_sparse_clone() {
 
 # 添加额外插件
 git_sparse_clone small-package  https://github.com/caiwx86/openwrt-packages \
-  luci-theme-argon luci-app-argon-config \
-  smartdns luci-app-smartdns \
   luci-app-npc luci-app-syncthing
-#  luci-app-dockerman \
-#  luci-app-turboacc
-#  luci-app-adguardhome \
 #  luci-app-homeassistant luci-lib-taskd taskd luci-lib-xterm
 #   luci-app-homebridge
 
@@ -39,7 +34,7 @@ rm -rf feeds/packages/utils/v2dat
 # 在线用户
 git_sparse_clone main https://github.com/danchexiaoyang/luci-app-onliner luci-app-onliner 
 # 晶晨宝盒
-git_sparse_clone main https://github.com/ophub/luci-app-amlogic luci-app-amlogic
+# git_sparse_clone main https://github.com/ophub/luci-app-amlogic luci-app-amlogic
 sed -i "s|firmware_repo.*|firmware_repo 'https://github.com/haiibo/OpenWrt'|g" package/luci-app-amlogic/root/etc/config/amlogic
 # sed -i "s|kernel_path.*|kernel_path 'https://github.com/ophub/kernel'|g" package/luci-app-amlogic/root/etc/config/amlogic
 sed -i "s|ARMv8|ARMv8_PLUS|g" package/luci-app-amlogic/root/etc/config/amlogic

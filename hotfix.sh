@@ -27,3 +27,5 @@ sed -i 's/admin\/services/admin\/network/g' feeds/luci/applications/luci-app-nlb
 sed -i 's/admin\/services/admin\/network/g' feeds/luci/applications/luci-app-samba4/root/usr/share/luci/menu.d/*.json
 # 调整 UPNP 到 网络 菜单
 sed -i 's/admin\/services/admin\/network/g' feeds/luci/applications/luci-app-upnp/root/usr/share/luci/menu.d/*.json
+# 调整 Wireguard 到 网络 菜单 
+sed -i 's/admin\/status/admin\/network/g' feeds/protocols/luci-proto-wireguard/root/usr/share/luci/menu.d/*.json

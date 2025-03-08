@@ -37,6 +37,7 @@ git_sparse_clone main https://github.com/danchexiaoyang/luci-app-onliner luci-ap
 # git_sparse_clone main https://github.com/ophub/luci-app-amlogic luci-app-amlogic
 sed -i "s|firmware_repo.*|firmware_repo 'https://github.com/caiwx86/OpenWrt'|g" package/kenzok8/luci-app-amlogic/root/etc/config/amlogic
 sed -i "s|kernel_path.*|kernel_path 'https://github.com/ophub/kernel'|g" package/kenzok8/luci-app-amlogic/root/etc/config/amlogic
+sed -i "s|shared_fstype.*|shared_fstype 'btrfs'|g" package/kenzok8/luci-app-amlogic/root/etc/config/amlogic
 #sed -i "s|ARMv8|ARMv8_PLUS|g" package/luci-app-amlogic/root/etc/config/amlogic
 
 # adguardhome

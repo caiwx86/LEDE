@@ -20,7 +20,7 @@ sed -i 's/KERNEL_PATCHVER:=*.*/KERNEL_PATCHVER:=6.6/g' target/linux/rockchip/Mak
 
 # luci23.05
 # 调整 ttyd 到 系统 菜单
-sed -i 's/admin\/services/admin\/system/g' feeds/luci/applications/luci-app-ttyd/root/usr/share/luci/menu.d/*.json
+sed -i 's/admin\/services/admin\/system/g'  feeds/luci/applications/luci-app-ttyd/root/usr/share/luci/menu.d/*.json
 # 调整 带宽监控 到 网络 菜单
 sed -i 's/admin\/services/admin\/network/g' feeds/luci/applications/luci-app-nlbwmon/root/usr/share/luci/menu.d/*.json
 # 调整 网络共享 到 NAS 菜单
@@ -28,4 +28,4 @@ sed -i 's/admin\/services/admin\/network/g' feeds/luci/applications/luci-app-sam
 # 调整 UPNP 到 网络 菜单
 sed -i 's/admin\/services/admin\/network/g' feeds/luci/applications/luci-app-upnp/root/usr/share/luci/menu.d/*.json
 # 调整 Wireguard 到 网络 菜单 
-sed -i 's/admin\/status/admin\/network/g' feeds/protocols/luci-proto-wireguard/root/usr/share/luci/menu.d/*.json
+sed -i 's/admin\/status/admin\/network/g'   feeds/luci/protocols/luci-proto-wireguard/root/usr/share/luci/menu.d/*.json

@@ -19,7 +19,7 @@ env:
   UPLOAD_RELEASE: true
   OPENWRT_RELEASE: true
   FIRMWARE_TAG: Rockchip-Luci-Flippy
-  OPENWRT_TAG: ARMv8 
+  OPENWRT_TAG: ARMv8
   TZ: Asia/Shanghai
 
 jobs:

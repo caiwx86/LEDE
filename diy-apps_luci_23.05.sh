@@ -24,10 +24,8 @@ git_sparse_clone small-package  https://github.com/caiwx86/openwrt-packages \
 #   luci-app-homebridge
 
 # 科学上网插件
-# passwall passwall2 xray v2raya mosdns
+# passwall2 xray v2raya mosdns luci-app-ssr-plus luci-app-amlogic luci-app-smartdns luci-theme-argon
 # git_sparse_clone main https://github.com/caiwx86/openwrt-packages small
-# echo 'src-git kenzo https://github.com/kenzok8/openwrt-packages' >>feeds.conf.default
-# echo 'src-git small https://github.com/kenzok8/small' >>feeds.conf.default
 git clone --depth=1  https://github.com/kenzok8/openwrt-packages package/kenzok8
 git clone --depth=1  https://github.com/kenzok8/small package/small
 rm -rf feeds/packages/net/{alist,adguardhome,mosdns,xray*,v2ray*,v2ray*,sing*,smartdns,geoview}

@@ -19,7 +19,7 @@ env:
   UPLOAD_RELEASE: true
   OPENWRT_RELEASE: true
   FIRMWARE_TAG: Rockchip-Luci-Flippy
-  OPENWRT_TAG: ARMv8
+  OPENWRT_TAG: Rockchip-Luci-Flippy
   TZ: Asia/Shanghai
 
 jobs:
@@ -273,12 +273,12 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*-flippy-*
         body: |
-          **This is OpenWrt Firmware for Armvirt 64**
+          **This is OpenWrt Firmware for ${{ env.FIRMWARE_TAG }}**
           ### 📒 固件信息
-          - 🚀 ARMv8 多功能版，集成插件多适合折腾
-          - 💻 平台架构: ${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}
+          - 💻 平台架构: ${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }} (rk33xx, rk35xx)
           - ⚽ 固件源码: ${{ env.REPO_URL }}
           - 💝 源码分支: ${{ env.REPO_BRANCH }}
+          - 🚀 内核版本: ${{ env.KERNEL }}
           - 🌐 默认地址: 192.168.1.1
           - 🔑 默认密码: password
           ### 🍻 安装与更新

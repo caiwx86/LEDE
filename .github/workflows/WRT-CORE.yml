@@ -1,0 +1,272 @@
+#云编译公用核心
+name: WRT-CORE
+
+on:
+  workflow_call:
+    inputs:
+      WRT_TARGET:
+        required: true
+        type: string
+      WRT_THEME:
+        required: true
+        type: string
+      WRT_NAME:
+        required: true
+        type: string
+      WRT_IP:
+        required: true
+        type: string
+      WRT_PW:
+        required: true
+        type: string
+      WRT_REPO:
+        required: true
+        type: string
+      WRT_BRANCH:
+        required: true
+        type: string
+      WRT_SOURCE:
+        required: false
+        type: string
+      WRT_SUFFIX:
+        required: true
+        type: string
+      WRT_PACKAGE:
+        required: false
+        type: string
+      WRT_TEST:
+        required: false
+        type: string
+      WRT_COMMIT:
+        required: false
+        type: string
+
+env:
+  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+  WRT_TARGET: ${{inputs.WRT_TARGET}}
+  WRT_THEME: ${{inputs.WRT_THEME}}
+  WRT_NAME: ${{inputs.WRT_NAME}}
+  WRT_IP: ${{inputs.WRT_IP}}
+  WRT_PW: ${{inputs.WRT_PW}}
+  WRT_REPO: ${{inputs.WRT_REPO}}
+  WRT_BRANCH: ${{inputs.WRT_BRANCH}}
+  WRT_SOURCE: ${{inputs.WRT_SOURCE}}
+  WRT_SUFFIX: ${{inputs.WRT_SUFFIX}}
+  WRT_PACKAGE: ${{inputs.WRT_PACKAGE}}
+  WRT_TEST: ${{inputs.WRT_TEST}}
+  WRT_COMMIT: ${{inputs.WRT_COMMIT}}
+
+jobs:
+  core:
+    name: ${{inputs.WRT_SOURCE}} - (${{inputs.WRT_NAME}})
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout Projects
+        uses: actions/checkout@main
+
+      - name: Initialization Values
+        run: |
+          export WRT_DATE=$(TZ=UTC-8 date +"%y.%m.%d_%H.%M.%S")
+          export WRT_CI=$(basename $GITHUB_WORKSPACE)
+          export WRT_VER=$(echo $WRT_REPO | cut -d '/' -f 5-)-$WRT_BRANCH
+          export WRT_TYPE=$(sed -n "1{s/^#//;s/\r$//;p;q}" $GITHUB_WORKSPACE/Config/$WRT_TARGET-$WRT_SUFFIX.txt)
+          echo "WRT_DATE=$WRT_DATE" >> $GITHUB_ENV
+          echo "WRT_CI=$WRT_CI" >> $GITHUB_ENV
+          echo "WRT_VER=$WRT_VER" >> $GITHUB_ENV
+          echo "WRT_TYPE=$WRT_TYPE" >> $GITHUB_ENV
+
+      - name: Clone Code
+        run: |
+          git clone --depth=1 --single-branch --branch $WRT_BRANCH $WRT_REPO ./wrt/
+
+          cd ./wrt/
+          echo "OPENWRT_PATH=$PWD" >> $GITHUB_ENV
+
+          if [ -n "$WRT_COMMIT" ]; then
+            git fetch --depth=1 origin $WRT_COMMIT
+            git checkout $WRT_COMMIT
+          fi
+          echo "WRT_HASH=$(git log -1 --pretty=format:'%h')" >> $GITHUB_ENV
+
+      - name: Check Repo Log
+        run: |
+          cd $OPENWRT_PATH
+
+
+          VERSION_INFO=$(git show -s --date=short --format="作者: %an<br/>时间: %cd<br/>内容: %s<br/>hash: %h")
+          echo "VERSION_INFO=$VERSION_INFO" >> $GITHUB_ENV
+          # VERSION_KERNEL=$(grep -oP 'LINUX_KERNEL_HASH-\K[0-9]+\.[0-9]+\.[0-9]+' include/kernel-6.6)
+          # if [[ $WRT_REPO == *"lede"* ]]; then
+          #   VERSION_KERNEL=$(grep -oP 'LINUX_KERNEL_HASH-\K[0-9]+\.[0-9]+\.[0-9]+' include/kernel-6.1)
+          # fi
+          # echo "VERSION_KERNEL=$VERSION_KERNEL" >> $GITHUB_ENV
+          VERSION_LOG=$(git log --since="76 hours ago" --until="now" --pretty=format:"%h %s" --no-merges -- . ':(exclude)scripts/feeds')
+          if [ -n "$VERSION_LOG" ] && echo "$VERSION_LOG" | grep -q .; then
+            echo "WRT_NEED_COMPILE=true" >> $GITHUB_ENV
+          else
+            echo "WRT_NEED_COMPILE=false" >> $GITHUB_ENV
+            echo "!!!过去76小时内无更新,跳过编译流程!!!"
+          fi
+
+      - name: Free Disk Space
+        uses: FirelightFlagboy/gh-runner-free-disk-space@main
+        with:
+          android: true
+          dotnet: true
+          haskell: true
+          docker-images: true
+          large-packages: true
+          swap-storage: true
+          tool-cache: true
+
+      - name: Initialization Environment
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          sudo -E apt -yqq update
+          sudo -E apt -yqq full-upgrade
+          sudo -E apt -yqq autoremove --purge
+          sudo -E apt -yqq autoclean
+          sudo -E apt -yqq clean
+          sudo -E apt -yqq install dos2unix libfuse-dev
+          sudo bash -c 'bash <(curl -sL https://build-scripts.immortalwrt.org/init_build_environment.sh)'
+          sudo -E systemctl daemon-reload
+          sudo -E timedatectl set-timezone "Asia/Shanghai"
+
+
+      - name: Check Scripts
+        run: |
+          find ./ -maxdepth 3 -type f -iregex ".*\(txt\|sh\)$" -exec dos2unix {} \; -exec chmod +x {} \;
+
+      - name: Check Caches
+        id: check-cache
+        if: ${{ env.WRT_TEST != 'true' && env.WRT_NEED_COMPILE == 'true' }}
+        uses: actions/cache@main
+        with:
+          key: ${{env.WRT_TARGET}}-${{env.WRT_VER}}-${{env.WRT_HASH}}
+          restore-keys: ${{env.WRT_TARGET}}-${{env.WRT_VER}}
+          path: |
+            $OPENWRT_PATH/.ccache
+            $OPENWRT_PATH/staging_dir/host*
+            $OPENWRT_PATH/staging_dir/tool*
+
+      - name: Update Caches
+        if: ${{ env.WRT_TEST != 'true' && env.WRT_NEED_COMPILE == 'true' }}
+        run: |
+          if [ -d "$OPENWRT_PATH/staging_dir" ]; then
+            find "$OPENWRT_PATH/staging_dir" -type d -name "stamp" -not -path "*target*" | while read -r DIR; do
+              find "$DIR" -type f -exec touch {} +
+            done
+
+            mkdir -p $OPENWRT_PATH/tmp && echo "1" > $OPENWRT_PATH/tmp/.build
+
+            echo "toolchain skiped done!"
+          else
+            echo "caches missed!"
+          fi
+
+          if ${{steps.check-cache.outputs.cache-hit != 'true'}}; then
+            CACHE_LIST=$(gh cache list --key "$WRT_TARGET-$WRT_VER" | cut -f 1)
+            for CACHE_KEY in $CACHE_LIST; do
+               gh cache delete $CACHE_KEY
+            done
+
+            echo "caches cleanup done!"
+          fi
+
+      - name: Update Feeds
+        run: |
+          cd $OPENWRT_PATH/
+          cat $GITHUB_WORKSPACE/Config/GENERAL.txt $GITHUB_WORKSPACE/Config/APPS.txt $GITHUB_WORKSPACE/Config/$WRT_TARGET-$WRT_SUFFIX.txt >> .config
+          ./scripts/feeds install -af
+          ./scripts/feeds update -a
+          $GITHUB_WORKSPACE/scripts/qca/Feeds.sh
+
+      - name: Custom Packages
+        run: |
+          cd $OPENWRT_PATH/package/
+          $GITHUB_WORKSPACE/scripts/qca/Packages.sh
+          $GITHUB_WORKSPACE/scripts/qca/Handles.sh
+
+      - name: Custom Settings
+        run: |
+          cd $OPENWRT_PATH/
+          $GITHUB_WORKSPACE/scripts/qca/Settings.sh
+
+          make defconfig -j$(nproc)
+          ./scripts/diffconfig.sh > seed.config
+          cat seed.config
+
+      - name: Download Packages
+        if: ${{ env.WRT_TEST != 'true' && env.WRT_NEED_COMPILE == 'true' }}
+        run: |
+          cd $OPENWRT_PATH/
+
+          make download -j$(nproc)
+
+      - name: Compile Firmware
+        if: ${{ env.WRT_TEST != 'true' && env.WRT_NEED_COMPILE == 'true' }}
+        run: |
+          cd $OPENWRT_PATH/
+
+          make -j$(nproc) || make -j1 V=s
+
+      - name: Machine Information
+        if: ${{ env.WRT_NEED_COMPILE == 'true' }}
+        run: |
+          cd $OPENWRT_PATH/
+
+          echo "======================="
+          lscpu | grep -E "name|Core|Thread"
+          echo "======================="
+          df -h
+          echo "======================="
+          du -h --max-depth=1
+          echo "======================="
+
+      - name: Package Firmware
+        if: ${{ env.WRT_NEED_COMPILE == 'true' }}
+        run: |
+          cd $OPENWRT_PATH/ && mkdir ./upload/
+
+          cp -f ./.config ./upload/Config_"$WRT_TARGET"_"$WRT_NAME"_"$WRT_VER"_"$WRT_DATE".txt
+          cp -f ./seed.config ./upload/Config_"$WRT_TARGET"_"$WRT_NAME"_"$WRT_VER"_"$WRT_DATE".seed.txt
+
+          if [[ $WRT_TEST != 'true' ]]; then
+            KVER=$(find ./bin/targets/ -type f -name "*.manifest" -exec grep -oP '^kernel - \K[\d\.]+' {} \;)
+            find ./bin/targets/ -iregex ".*\(buildinfo\|json\|manifest\|sha256sums\|packages\)$" -exec rm -rf {} +
+            find ./bin/targets/ -iregex ".*\(initramfs-uImage\).*" -exec rm -rf {} +
+
+            for TYPE in $WRT_TYPE ; do
+              for FILE in $(find ./bin/targets/ -type f -iname "*$TYPE*.*") ; do
+                EXT=$(basename $FILE | cut -d '.' -f 2-)
+                NAME=$(basename $FILE | cut -d '.' -f 1 | grep -io "\($TYPE\).*")
+                NEW_FILE="$WRT_NAME"_"$WRT_VER"_"$NAME"_"$WRT_DATE"."$EXT"
+                mv -f $FILE ./upload/$NEW_FILE
+              done
+            done
+
+            find ./bin/targets/ -type f -exec mv -f {} ./upload/ \;
+          fi
+          echo "WRT_KVER=${KVER:-none}" >> $GITHUB_ENV
+
+      - name: Release Firmware
+        if: ${{ env.WRT_NEED_COMPILE == 'true' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: R${{ env.WRT_DATE }}_${{ env.WRT_NAME }}
+          name: R${{ env.WRT_DATE }} for ${{ env.WRT_NAME }}
+          files: $OPENWRT_PATH/upload/*.*
+          body: |
+            **This is ${{ env.WRT_NAME }} OpenWrt Firmware for ${{ env.WRT_TYPE }}**
+            ### 📒 固件信息(无WIFI)
+            - 🖥️ 这是  ${{ env.WRT_TYPE }} 使用的 OpenWrt 固件
+            - 💻 平台: ${{ env.WRT_TARGET }}
+            - ⚽ 源码: ${{ env.WRT_SOURCE }}
+            - 💝 分支: ${{ env.WRT_BRANCH }}
+            - 🌐 地址: **${{ env.WRT_IP }}**
+            - 🔑 密码: **${{ env.WRT_PW }}**
+            ### 🧊 固件版本
+            - 固件内核版本：**${{ env.WRT_KVER }}**
+            - 固件编译前最后一次➦[主源码](${{ env.WRT_REPO }})更新记录
+            - ${{ env.VERSION_INFO }}

@@ -192,13 +192,6 @@ jobs:
           $GITHUB_WORKSPACE/scripts/qca/Handles.sh
           $GITHUB_WORKSPACE/scripts/qca/Settings.sh
 
-      - name: Custom Settings
-        run: |
-          cd $OPENWRT_PATH/
-          make defconfig -j$(nproc)
-          ./scripts/diffconfig.sh > seed.config
-          cat seed.config
-
       - name: Download DL Package
         run: |
           cd $OPENWRT_PATH

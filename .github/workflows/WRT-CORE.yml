@@ -183,10 +183,10 @@ jobs:
       
       - name: Load Custom Configuration
         run: |
+          cd $OPENWRT_PATH
           [ -e files ] && mv files $OPENWRT_PATH/files
           cat $GITHUB_WORKSPACE/configs/general.config $GITHUB_WORKSPACE/configs/luci-app.config $GITHUB_WORKSPACE/configs/qca.config >> .config
           chmod +x $GITHUB_WORKSPACE/scripts/qca/*.sh
-          cd $OPENWRT_PATH
           $GITHUB_WORKSPACE/scripts/qca/Feeds.sh
           $GITHUB_WORKSPACE/scripts/qca/Packages.sh
           $GITHUB_WORKSPACE/scripts/qca/Handles.sh

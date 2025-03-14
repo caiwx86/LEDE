@@ -173,26 +173,29 @@ jobs:
 
             echo "caches cleanup done!"
           fi
-
-      - name: Update Feeds
+      
+      - name: Install Feeds
         run: |
-          cd $OPENWRT_PATH/
-          cat $GITHUB_WORKSPACE/Config/GENERAL.txt $GITHUB_WORKSPACE/Config/APPS.txt $GITHUB_WORKSPACE/Config/$WRT_TARGET-$WRT_SUFFIX.txt >> .config
-          ./scripts/feeds install -af
+          cd $OPENWRT_PATH
           ./scripts/feeds update -a
-          $GITHUB_WORKSPACE/scripts/qca/Feeds.sh
-
-      - name: Custom Packages
+          ./scripts/feeds install -af
+     
+      
+      - name: Load Custom Configuration
         run: |
-          cd $OPENWRT_PATH/package/
+          [ -e files ] && mv files $OPENWRT_PATH/files
+          cat $GITHUB_WORKSPACE/configs/general.config $GITHUB_WORKSPACE/configs/luci-app.config \
+              $GITHUB_WORKSPACE/configs/qca.config >> .config
+          chmod +x $GITHUB_WORKSPACE/scripts/qca/*.sh
+          cd $OPENWRT_PATH
+          $GITHUB_WORKSPACE/scripts/qca/Feeds.sh
           $GITHUB_WORKSPACE/scripts/qca/Packages.sh
           $GITHUB_WORKSPACE/scripts/qca/Handles.sh
+          $GITHUB_WORKSPACE/scripts/qca/Settings.sh
 
       - name: Custom Settings
         run: |
           cd $OPENWRT_PATH/
-          $GITHUB_WORKSPACE/scripts/qca/Settings.sh
-
           make defconfig -j$(nproc)
           ./scripts/diffconfig.sh > seed.config
           cat seed.config

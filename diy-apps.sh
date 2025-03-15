@@ -46,6 +46,3 @@ fi
 
 # adguardhome
 bash $GITHUB_WORKSPACE/scripts/preset-adguardhome.sh
-
-chmod +x $GITHUB_WORKSPACE/scripts/qca/*.sh
-$GITHUB_WORKSPACE/scripts/qca/Settings.sh

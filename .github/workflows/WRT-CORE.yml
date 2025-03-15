@@ -196,11 +196,14 @@ jobs:
         run: |
           cd $OPENWRT_PATH
           make defconfig
+          
+          ./scripts/diffconfig.sh > seed.config
+          cat seed.config
+
           make download -j8
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
-          ./scripts/diffconfig.sh > seed.config
-          cat seed.config
+
     
       - name: Compile openwrt or get rootfs
         id: compile

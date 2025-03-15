@@ -48,6 +48,4 @@ fi
 bash $GITHUB_WORKSPACE/scripts/preset-adguardhome.sh
 
 chmod +x $GITHUB_WORKSPACE/scripts/qca/*.sh
-# $GITHUB_WORKSPACE/scripts/qca/Packages.sh
-$GITHUB_WORKSPACE/scripts/qca/Handles.sh
 $GITHUB_WORKSPACE/scripts/qca/Settings.sh

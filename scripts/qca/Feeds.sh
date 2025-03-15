@@ -1,12 +1,5 @@
 #!/bin/bash
 
-#LEDE平台调整
-if [[ $WRT_SUFFIX == "LEDE" ]]; then
-	# sed -i '/openwrt-23.05/d' feeds.conf.default
-	# sed -i 's/^#\(.*luci\)/\1/' feeds.conf.default
-  #  sed -i 's/#src-git helloworld/src-git helloworld/g' ./feeds.conf.default
-
-
 #  ======该脚本主要是拉取Apps============
 # 移除不需要的包
 rm -rf feeds/luci/themes/{luci-theme-argon,luci-theme-netgear}
@@ -43,10 +36,8 @@ git_sparse_clone main https://github.com/danchexiaoyang/luci-app-onliner luci-ap
 # adguardhome
 bash $GITHUB_WORKSPACE/scripts/preset-adguardhome.sh
 
-fi
 
-# DNSMASQ DNSSERVER
-sed -i 's/DNS_SERVERS=\"\"/DNS_SERVERS=\"223.5.5.5 8.8.4.4\"/g' package/network/services/dnsmasq/files/dnsmasq.init
-
-./scripts/feeds update -a
-./scripts/feeds install -af
+chmod +x $GITHUB_WORKSPACE/scripts/qca/*.sh
+# $GITHUB_WORKSPACE/scripts/qca/Packages.sh
+$GITHUB_WORKSPACE/scripts/qca/Handles.sh
+$GITHUB_WORKSPACE/scripts/qca/Settings.sh

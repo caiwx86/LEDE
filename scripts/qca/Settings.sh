@@ -1,6 +1,9 @@
 #!/bin/bash
 
 #自定义所有设置
+WRT_IP=10.0.10.1
+WRT_THEME=argon
+
 echo "当前网关IP: $WRT_IP"
 # 支持 ** 查找子目录
 shopt -s globstar
@@ -25,13 +28,11 @@ CFG_FILE="./package/base-files/files/bin/config_generate"
 #修改默认IP地址
 sed -i "s/192\.168\.[0-9]*\.[0-9]*/$WRT_IP/g" $CFG_FILE
 #修改默认主机名
-sed -i "s/hostname='.*'/hostname='$WRT_NAME'/g" $CFG_FILE
+# sed -i "s/hostname='.*'/hostname='$WRT_NAME'/g" $CFG_FILE
 #LEDE平台调整
-if [[ $WRT_REPO == *"lede"* ]]; then
-	CFG_FILE_LEDE="./package/base-files/luci2/bin/config_generate"
-	sed -i "s/192\.168\.[0-9]*\.[0-9]*/$WRT_IP/g" $CFG_FILE_LEDE
-	sed -i "s/hostname='.*'/hostname='$WRT_NAME'/g" $CFG_FILE_LEDE
-fi
+CFG_FILE_LEDE="./package/base-files/luci2/bin/config_generate"
+sed -i "s/192\.168\.[0-9]*\.[0-9]*/$WRT_IP/g" $CFG_FILE_LEDE
+sed -i "s/hostname='.*'/hostname='$WRT_NAME'/g" $CFG_FILE_LEDE
 
 #调整位置
 sed -i 's/services/system/g' $(find ./feeds/luci/applications/luci-app-ttyd/root/usr/share/luci/menu.d/ -type f -name "luci-app-ttyd.json")
@@ -66,8 +67,3 @@ echo "CONFIG_PACKAGE_luci=y" >> ./.config
 echo "CONFIG_LUCI_LANG_zh_Hans=y" >> ./.config
 echo "CONFIG_PACKAGE_luci-theme-$WRT_THEME=y" >> ./.config
 # echo "CONFIG_PACKAGE_luci-app-$WRT_THEME-config=y" >> ./.config
-
-#手动调整的插件
-if [ -n "$WRT_PACKAGE" ]; then
-	echo "$WRT_PACKAGE" >> ./.config
-fi

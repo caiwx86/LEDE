@@ -17,11 +17,28 @@ function git_sparse_clone() {
   cd .. && rm -rf $repodir
 }
 
+function remove_package() {
+   packages="$@"
+   for package in $packages; do 
+      pkg_path=$(find . -name "$package")
+      if [[ ! "$pkg_path" == "" ]]; then
+         rm -rvf $pkg_path
+      fi
+   done
+}
+
 # 添加额外插件
 git_sparse_clone small-package  https://github.com/caiwx86/openwrt-packages \
   luci-app-npc luci-app-syncthing
 #  luci-app-homeassistant luci-lib-taskd taskd luci-lib-xterm
 #   luci-app-homebridge
+
+# 添加额外插件
+remove_package daed luci-app-daed
+git_sparse_clone master https://github.com/QiuSimons/luci-app-daed \
+   daed luci-app-daed
+# 解决luci-app-daed 依赖问题
+mkdir -p package/libcron && wget -O package/libcron/Makefile https://raw.githubusercontent.com/immortalwrt/packages/refs/heads/master/libs/libcron/Makefile
 
 # 科学上网插件
 # passwall2 xray v2raya mosdns luci-app-ssr-plus luci-app-amlogic luci-app-smartdns luci-theme-argon

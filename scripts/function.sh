@@ -142,13 +142,13 @@ function generate_config() {
   if [[ $NSS_ENABLE == "true" ]]; then
     set_nss_driver $config_file
   fi
-  cat_usb_net $config_file
+  # cat_usb_net $config_file
   #增加ebpf
   cat_ebpf_config $config_file
   enable_skb_recycler $config_file
   set_kernel_size
   #增加内核选项
-  cat_kernel_config "target/linux/qualcommax/${target}/config-default"
+  # cat_kernel_config "target/linux/qualcommax/${target}/config-default"
 }
 
 # Git稀疏克隆，只克隆指定目录到本地

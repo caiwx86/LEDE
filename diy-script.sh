@@ -93,7 +93,7 @@ install_feeds() {
 fix_default_set() {
     # 修改默认主题
     if [ -d "$OPENWRT_PATH/feeds/luci/collections/" ]; then
-        find "$OPENWRT_PATH/feeds/luci/collections/" -type f -name "Makefile" -exec sed -i "s/luci-theme-bootstrap/luci-theme-$THEME_SET/g" {} \;
+        find "$OPENWRT_PATH/feeds/luci/collections/" -type f -name "Makefile" -exec sed -i "s/luci-theme-bootstrap/luci-theme-$WRT_THEME/g" {} \;
     fi
 
     if [ -d "$OPENWRT_PATH/feeds/small8/luci-theme-argon" ]; then
@@ -124,6 +124,7 @@ EOF
     fi
 }
 
+function set_other() {
 #修改默认主题
 sed -i "s/luci-theme-bootstrap/luci-theme-$WRT_THEME/g" $(find ./feeds/luci/collections/ -type f -name "Makefile")
 
@@ -190,11 +191,9 @@ find package/*/ -maxdepth 2 -path "*/Makefile" | xargs -i sed -i 's/..\/..\/lang
 find package/*/ -maxdepth 2 -path "*/Makefile" | xargs -i sed -i 's/PKG_SOURCE_URL:=@GHREPO/PKG_SOURCE_URL:=https:\/\/github.com/g' {}
 find package/*/ -maxdepth 2 -path "*/Makefile" | xargs -i sed -i 's/PKG_SOURCE_URL:=@GHCODELOAD/PKG_SOURCE_URL:=https:\/\/codeload.github.com/g' {}
 
-# 取消主题默认设置
-find package/luci-theme-*/* -type f -name '*luci-theme-*' -print -exec sed -i '/set luci.main.mediaurlbase/d' {} \;
-
 # DNSMASQ DNSSERVER
 sed -i 's/DNS_SERVERS=\"\"/DNS_SERVERS=\"223.5.5.5 8.8.4.4\"/g' package/network/services/dnsmasq/files/dnsmasq.init
+}
 
 main() {
     update_feeds
@@ -202,6 +201,7 @@ main() {
     fix_default_set
     update_default_lan_addr
     add_backup_info_to_sysupgrade
+    set_other
     install_feeds
 }
 

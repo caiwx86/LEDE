@@ -138,7 +138,10 @@ function generate_config() {
   #默认机型为ipq60xx
   local target='ipq60xx'
 
-  set_nss_driver $config_file
+  # NSS参数配置 
+  if [[ $NSS_ENABLE == "true" ]]; then
+    set_nss_driver $config_file
+  fi
   cat_usb_net $config_file
   #增加ebpf
   cat_ebpf_config $config_file
@@ -176,7 +179,7 @@ git_sparse_clone master https://github.com/QiuSimons/luci-app-daed \
    daed luci-app-daed
 }
 
-function set_theme(){
+function set_theme() {
 remove_package luci-app-argon-config luci-theme-argon 
 git_sparse_clone openwrt-24.10 https://github.com/sbwml/luci-theme-argon \
    luci-app-argon-config luci-theme-argon 
@@ -187,7 +190,18 @@ sed -i "/^.main .main-left .nav li a {/,/^}/ { /font-weight: bolder/d }" $argon_
 sed -i '/^\[data-page="admin-system-opkg"\] #maincontent>.container {/,/}/ s/font-weight: 600;/font-weight: normal;/' $argon_css_file
 }
 
+function set_nss_usage() {
+#你没有神奇的NSS路由器我很难跟你解释
+USAGE_FILE="./package/lean/autocore/files/arm/sbin/usage"
+if [ -f "$USAGE_FILE" ]; then
+    cat $GITHUB_WORKSPACE/scripts/patch/usage > $USAGE_FILE
+fi
+}
+
 # 主要执行程序
 add_daed
 set_theme
+if [[ $NSS_ENABLE == "true" ]]; then
+  set_nss_usage
+fi
 generate_config && cat $config_file

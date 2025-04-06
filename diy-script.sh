@@ -5,6 +5,12 @@ WRT_IP=10.0.10.1
 WRT_THEME=argon
 WRT_NAME=LEDE
 
+FEEDS_CONF="feeds.conf.default"
+GOLANG_REPO="https://github.com/sbwml/packages_lang_golang"
+GOLANG_BRANCH="24.x"
+THEME_SET="argon"
+LAN_ADDR="10.0.10.1"
+
 echo "当前网关IP: $WRT_IP"
 # 支持 ** 查找子目录
 shopt -s globstar
@@ -15,16 +21,136 @@ bash $GITHUB_WORKSPACE/hotfix.sh
 # 添加NSS/12大内核支持等
 chmod +x $GITHUB_WORKSPACE/scripts/function.sh && $GITHUB_WORKSPACE/scripts/function.sh
 
-# NSS BEGING
-#移除advancedplus无用功能
-sed -i '/advancedplus\/advancedset/d' $(find ./**/luci-app-advancedplus/luasrc/controller/ -type f -name "advancedplus.lua")
-sed -i '/advancedplus\/advancedipk/d' $(find ./**/luci-app-advancedplus/luasrc/controller/ -type f -name "advancedplus.lua")
+update_feeds() {
+    FEEDS_CONF=feeds.conf
+    # 删除注释行
+    sed -i '/^#/d' "$FEEDS_CONF"
 
-#你没有神奇的NSS路由器我很难跟你解释
-USAGE_FILE="./package/lean/autocore/files/arm/sbin/usage"
-if [ -f "$USAGE_FILE" ]; then
-    cat $GITHUB_WORKSPACE/scripts/patch/usage > $USAGE_FILE
-fi
+    # 检查并添加 small-package 源
+    if ! grep -q "small-package" "$FEEDS_CONF"; then
+        # 确保文件以换行符结尾
+        [ -z "$(tail -c 1 "$FEEDS_CONF")" ] || echo "" >>"$FEEDS_CONF"
+        echo "src-git small8 https://github.com/kenzok8/small-package" >>"$FEEDS_CONF"
+    fi
+    
+    # 更新 feeds
+    ./scripts/feeds clean
+    ./scripts/feeds update -a
+}
+
+remove_unwanted_packages() {
+    local luci_packages=(
+        "luci-app-passwall" "luci-app-smartdns" "luci-app-ddns-go" "luci-app-rclone"
+        "luci-app-ssr-plus" "luci-app-vssr" "luci-theme-argon" "luci-app-daed" "luci-app-dae"
+        "luci-app-alist" "luci-app-argon-config" "luci-app-homeproxy" "luci-app-haproxy-tcp"
+        "luci-app-openclash" "luci-app-mihomo" "luci-app-appfilter"
+    )
+    local packages_net=(
+        "xray-core" "xray-plugin" "dns2socks" "alist" "hysteria"
+        "smartdns" "mosdns" "adguardhome" "ddns-go" "naiveproxy" "shadowsocks-rust"
+        "sing-box" "v2ray-core" "v2ray-geodata" "v2ray-plugin" "tuic-client"
+        "chinadns-ng" "ipt2socks" "tcping" "trojan-plus" "simple-obfs"
+        "shadowsocksr-libev" "dae" "daed" "mihomo" "geoview" "tailscale" "open-app-filter"
+    )
+    local small8_packages=(
+        "ppp" "firewall" "dae" "daed" "daed-next" "libnftnl" "nftables" "dnsmasq" "haproxy"
+    )
+
+    for pkg in "${luci_packages[@]}"; do
+        \rm -rf ./feeds/luci/applications/$pkg
+        \rm -rf ./feeds/luci/themes/$pkg
+    done
+
+    for pkg in "${packages_net[@]}"; do
+        \rm -rf ./feeds/packages/net/$pkg
+    done
+
+    for pkg in "${small8_packages[@]}"; do
+        \rm -rf ./feeds/small8/$pkg
+    done
+}
+
+install_small8() {
+    ./scripts/feeds install -p small8 -f xray-core xray-plugin dns2tcp dns2socks haproxy hysteria \
+        naiveproxy shadowsocks-rust sing-box v2ray-core v2ray-geodata v2ray-geoview v2ray-plugin \
+        tuic-client chinadns-ng ipt2socks tcping trojan-plus simple-obfs shadowsocksr-libev \
+        luci-app-passwall alist luci-app-alist smartdns luci-app-smartdns v2dat mosdns luci-app-mosdns \
+        adguardhome luci-app-adguardhome ddns-go luci-app-ddns-go taskd luci-lib-xterm luci-lib-taskd \
+        luci-app-store quickstart luci-app-quickstart luci-app-istorex luci-app-cloudflarespeedtest \
+        netdata luci-app-netdata lucky luci-app-lucky luci-app-openclash luci-app-homeproxy \
+        luci-app-amlogic nikki luci-app-nikki tailscale luci-app-tailscale oaf open-app-filter luci-app-oaf \
+        luci-theme-argon luci-theme-argon-config easytier luci-app-easytier nps luci-app-npc luci-app-ssr-plus
+}
+
+install_feeds() {
+    ./scripts/feeds update -i
+    for dir in $BUILD_DIR/feeds/*; do
+        # 检查是否为目录并且不以 .tmp 结尾，并且不是软链接
+        if [ -d "$dir" ] && [[ ! "$dir" == *.tmp ]] && [ ! -L "$dir" ]; then
+            if [[ $(basename "$dir") == "small8" ]]; then
+                install_small8
+            else
+                ./scripts/feeds install -f -ap $(basename "$dir")
+            fi
+        fi
+    done
+}
+
+fix_default_set() {
+    # 修改默认主题
+    if [ -d "$BUILD_DIR/feeds/luci/collections/" ]; then
+        find "$BUILD_DIR/feeds/luci/collections/" -type f -name "Makefile" -exec sed -i "s/luci-theme-bootstrap/luci-theme-$THEME_SET/g" {} \;
+    fi
+
+    if [ -d "$BUILD_DIR/feeds/small8/luci-theme-argon" ]; then
+        find "$BUILD_DIR/feeds/small8/luci-theme-argon" -type f -name "cascade*" -exec sed -i 's/--bar-bg/--primary/g' {} \;
+    fi
+
+    install -Dm755 "$BASE_PATH/patches/99_set_argon_primary" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/99_set_argon_primary"
+
+    if [ -f "$BUILD_DIR/package/emortal/autocore/files/tempinfo" ]; then
+        if [ -f "$BASE_PATH/patches/tempinfo" ]; then
+            \cp -f "$BASE_PATH/patches/tempinfo" "$BUILD_DIR/package/emortal/autocore/files/tempinfo"
+        fi
+    fi
+}
+
+update_default_lan_addr() {
+    if [[ $BUILD_SRC == *"lede"* ]]; then
+        local CFG_PATH="$BUILD_DIR/package/base-files/luci2/bin/config_generate"
+    else
+        local CFG_PATH="$BUILD_DIR/package/base-files/files/bin/config_generate"
+    fi
+
+    if [ -f $CFG_PATH ]; then
+        sed -i 's/192\.168\.[0-9]*\.[0-9]*/'$LAN_ADDR'/g' $CFG_PATH
+    fi
+}
+
+update_menu_location() {
+    local samba4_path="$BUILD_DIR/feeds/luci/applications/luci-app-samba4/root/usr/share/luci/menu.d/luci-app-samba4.json"
+    if [ -d "$(dirname "$samba4_path")" ] && [ -f "$samba4_path" ]; then
+        sed -i 's/nas/services/g' "$samba4_path"
+    fi
+
+    local tailscale_path="$BUILD_DIR/feeds/small8/luci-app-tailscale/root/usr/share/luci/menu.d/luci-app-tailscale.json"
+    if [ -d "$(dirname "$tailscale_path")" ] && [ -f "$tailscale_path" ]; then
+        sed -i 's/services/vpn/g' "$tailscale_path"
+    fi
+}
+
+# 添加系统升级时的备份信息
+function add_backup_info_to_sysupgrade() {
+    local conf_path="$BUILD_DIR/package/base-files/files/etc/sysupgrade.conf"
+
+    if [ -f "$conf_path" ]; then
+        cat >"$conf_path" <<'EOF'
+/etc/AdGuardHome.yaml
+/etc/easytier
+/etc/lucky/
+EOF
+    fi
+}
 
 #修改默认主题
 sed -i "s/luci-theme-bootstrap/luci-theme-$WRT_THEME/g" $(find ./feeds/luci/collections/ -type f -name "Makefile")
@@ -101,5 +227,14 @@ find package/luci-theme-*/* -type f -name '*luci-theme-*' -print -exec sed -i '/
 # DNSMASQ DNSSERVER
 sed -i 's/DNS_SERVERS=\"\"/DNS_SERVERS=\"223.5.5.5 8.8.4.4\"/g' package/network/services/dnsmasq/files/dnsmasq.init
 
-./scripts/feeds update -a
-./scripts/feeds install -af
+main() {
+    update_feeds
+    remove_unwanted_packages
+    fix_default_set
+    update_default_lan_addr
+    update_menu_location
+    add_backup_info_to_sysupgrade
+    install_feeds
+}
+
+main "$@"

@@ -12,6 +12,9 @@ shopt -s globstar
 # hotfix
 bash $GITHUB_WORKSPACE/hotfix.sh
 
+# 添加NSS/12大内核支持等
+chmod +x $GITHUB_WORKSPACE/scripts/function.sh && $GITHUB_WORKSPACE/scripts/function.sh
+
 # NSS BEGING
 #移除advancedplus无用功能
 sed -i '/advancedplus\/advancedset/d' $(find ./**/luci-app-advancedplus/luasrc/controller/ -type f -name "advancedplus.lua")

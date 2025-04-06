@@ -5,12 +5,6 @@ WRT_IP=10.0.10.1
 WRT_THEME=argon
 WRT_NAME=LEDE
 
-FEEDS_CONF="feeds.conf.default"
-GOLANG_REPO="https://github.com/sbwml/packages_lang_golang"
-GOLANG_BRANCH="24.x"
-THEME_SET="argon"
-LAN_ADDR="10.0.10.1"
-
 echo "当前网关IP: $WRT_IP"
 # 支持 ** 查找子目录
 shopt -s globstar
@@ -22,7 +16,7 @@ bash $GITHUB_WORKSPACE/hotfix.sh
 chmod +x $GITHUB_WORKSPACE/scripts/function.sh && $GITHUB_WORKSPACE/scripts/function.sh
 
 update_feeds() {
-    FEEDS_CONF=feeds.conf
+    FEEDS_CONF="feeds.conf.default"
     # 删除注释行
     sed -i '/^#/d' "$FEEDS_CONF"
 
@@ -98,44 +92,22 @@ install_feeds() {
 
 fix_default_set() {
     # 修改默认主题
-    if [ -d "$BUILD_DIR/feeds/luci/collections/" ]; then
-        find "$BUILD_DIR/feeds/luci/collections/" -type f -name "Makefile" -exec sed -i "s/luci-theme-bootstrap/luci-theme-$THEME_SET/g" {} \;
+    if [ -d "./feeds/luci/collections/" ]; then
+        find "./feeds/luci/collections/" -type f -name "Makefile" -exec sed -i "s/luci-theme-bootstrap/luci-theme-$THEME_SET/g" {} \;
     fi
 
-    if [ -d "$BUILD_DIR/feeds/small8/luci-theme-argon" ]; then
-        find "$BUILD_DIR/feeds/small8/luci-theme-argon" -type f -name "cascade*" -exec sed -i 's/--bar-bg/--primary/g' {} \;
+    if [ -d "./feeds/small8/luci-theme-argon" ]; then
+        find "./feeds/small8/luci-theme-argon" -type f -name "cascade*" -exec sed -i 's/--bar-bg/--primary/g' {} \;
     fi
 
-    install -Dm755 "$BASE_PATH/patches/99_set_argon_primary" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/99_set_argon_primary"
-
-    if [ -f "$BUILD_DIR/package/emortal/autocore/files/tempinfo" ]; then
-        if [ -f "$BASE_PATH/patches/tempinfo" ]; then
-            \cp -f "$BASE_PATH/patches/tempinfo" "$BUILD_DIR/package/emortal/autocore/files/tempinfo"
-        fi
-    fi
+    install -Dm755 "$GITHUB_WORKSPACE/scripts/patch/99_set_argon_primary" "./package/base-files/files/etc/uci-defaults/99_set_argon_primary"
 }
 
 update_default_lan_addr() {
-    if [[ $BUILD_SRC == *"lede"* ]]; then
-        local CFG_PATH="$BUILD_DIR/package/base-files/luci2/bin/config_generate"
-    else
-        local CFG_PATH="$BUILD_DIR/package/base-files/files/bin/config_generate"
-    fi
+    local CFG_PATH="./package/base-files/luci2/bin/config_generate"
 
     if [ -f $CFG_PATH ]; then
-        sed -i 's/192\.168\.[0-9]*\.[0-9]*/'$LAN_ADDR'/g' $CFG_PATH
-    fi
-}
-
-update_menu_location() {
-    local samba4_path="$BUILD_DIR/feeds/luci/applications/luci-app-samba4/root/usr/share/luci/menu.d/luci-app-samba4.json"
-    if [ -d "$(dirname "$samba4_path")" ] && [ -f "$samba4_path" ]; then
-        sed -i 's/nas/services/g' "$samba4_path"
-    fi
-
-    local tailscale_path="$BUILD_DIR/feeds/small8/luci-app-tailscale/root/usr/share/luci/menu.d/luci-app-tailscale.json"
-    if [ -d "$(dirname "$tailscale_path")" ] && [ -f "$tailscale_path" ]; then
-        sed -i 's/services/vpn/g' "$tailscale_path"
+        sed -i 's/192\.168\.[0-9]*\.[0-9]*/'$WRT_IP'/g' $CFG_PATH
     fi
 }
 
@@ -198,9 +170,6 @@ fi
 # TTYD 免登录
 sed -i 's|/bin/login|/bin/login -f root|g' feeds/packages/utils/ttyd/files/ttyd.config
 
-# 更改 Argon 主题背景
-cp -f $GITHUB_WORKSPACE/images/bg1.jpg package/luci-theme-argon/htdocs/luci-static/argon/img/bg1.jpg
-
 # x86 型号只显示 CPU 型号
 sed -i 's/${g}.*/${a}${b}${c}${d}${e}${f}${hydrid}/g' package/lean/autocore/files/x86/autocore
 
@@ -232,7 +201,6 @@ main() {
     remove_unwanted_packages
     fix_default_set
     update_default_lan_addr
-    update_menu_location
     add_backup_info_to_sysupgrade
     install_feeds
 }

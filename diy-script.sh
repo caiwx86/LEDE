@@ -16,7 +16,7 @@ bash $GITHUB_WORKSPACE/hotfix.sh
 chmod +x $GITHUB_WORKSPACE/scripts/function.sh && $GITHUB_WORKSPACE/scripts/function.sh
 
 update_feeds() {
-    FEEDS_CONF="feeds.conf.default"
+    FEEDS_CONF="$OPENWRT_PATH/feeds.conf.default"
     # 删除注释行
     sed -i '/^#/d' "$FEEDS_CONF"
 
@@ -78,7 +78,7 @@ install_small8() {
 
 install_feeds() {
     ./scripts/feeds update -i
-    for dir in ./feeds/*; do
+    for dir in $OPENWRT_PATH/feeds/*; do
         # 检查是否为目录并且不以 .tmp 结尾，并且不是软链接
         if [ -d "$dir" ] && [[ ! "$dir" == *.tmp ]] && [ ! -L "$dir" ]; then
             if [[ $(basename "$dir") == "small8" ]]; then
@@ -92,19 +92,19 @@ install_feeds() {
 
 fix_default_set() {
     # 修改默认主题
-    if [ -d "./feeds/luci/collections/" ]; then
-        find "./feeds/luci/collections/" -type f -name "Makefile" -exec sed -i "s/luci-theme-bootstrap/luci-theme-$THEME_SET/g" {} \;
+    if [ -d "$OPENWRT_PATH/feeds/luci/collections/" ]; then
+        find "$OPENWRT_PATH/feeds/luci/collections/" -type f -name "Makefile" -exec sed -i "s/luci-theme-bootstrap/luci-theme-$THEME_SET/g" {} \;
     fi
 
-    if [ -d "./feeds/small8/luci-theme-argon" ]; then
-        find "./feeds/small8/luci-theme-argon" -type f -name "cascade*" -exec sed -i 's/--bar-bg/--primary/g' {} \;
+    if [ -d "$OPENWRT_PATH/feeds/small8/luci-theme-argon" ]; then
+        find "$OPENWRT_PATH/feeds/small8/luci-theme-argon" -type f -name "cascade*" -exec sed -i 's/--bar-bg/--primary/g' {} \;
     fi
 
-    install -Dm755 "$GITHUB_WORKSPACE/scripts/patch/99_set_argon_primary" "./package/base-files/files/etc/uci-defaults/99_set_argon_primary"
+    install -Dm755 "$GITHUB_WORKSPACE/scripts/patch/99_set_argon_primary" "$OPENWRT_PATH/package/base-files/files/etc/uci-defaults/99_set_argon_primary"
 }
 
 update_default_lan_addr() {
-    local CFG_PATH="./package/base-files/luci2/bin/config_generate"
+    local CFG_PATH="$OPENWRT_PATH/package/base-files/luci2/bin/config_generate"
 
     if [ -f $CFG_PATH ]; then
         sed -i 's/192\.168\.[0-9]*\.[0-9]*/'$WRT_IP'/g' $CFG_PATH
@@ -127,14 +127,14 @@ EOF
 #修改默认主题
 sed -i "s/luci-theme-bootstrap/luci-theme-$WRT_THEME/g" $(find ./feeds/luci/collections/ -type f -name "Makefile")
 
-CFG_FILE="./package/base-files/files/bin/config_generate"
+CFG_FILE="$OPENWRT_PATH/package/base-files/files/bin/config_generate"
 if [ -f "$CFG_FILE" ]; then
 #修改默认IP地址
 sed -i "s/192\.168\.[0-9]*\.[0-9]*/$WRT_IP/g" $CFG_FILE
 sed -i "s/hostname='.*'/hostname='$WRT_NAME'/g" $CFG_FILE
 fi
 #LEDE平台调整
-CFG_FILE_LEDE="./package/base-files/luci2/bin/config_generate"
+CFG_FILE_LEDE="$OPENWRT_PATH/package/base-files/luci2/bin/config_generate"
 if [ -f "$CFG_FILE_LEDE" ]; then
 sed -i "s/192\.168\.[0-9]*\.[0-9]*/$WRT_IP/g" $CFG_FILE_LEDE
 sed -i "s/hostname='.*'/hostname='$WRT_NAME'/g" $CFG_FILE_LEDE
@@ -154,7 +154,7 @@ if [ -f "./package/feeds/luci/luci-app-openvpn-server/root/etc/config/openvpn" ]
     sed -i "s/192.168.1.0/$WRT_IPPART.0/g" ./package/feeds/luci/luci-app-openvpn-server/root/etc/config/openvpn
     echo "OpenVPN Server has been fixed the default gateway address!"
 fi
-echo "CONFIG_PACKAGE_luci-theme-$WRT_THEME=y" >> ./.config
+echo "CONFIG_PACKAGE_luci-theme-$WRT_THEME=y" >> $OPENWRT_PATH/.config
 
 # 更改默认 Shell 为 zsh
 sed -i 's/\/bin\/ash/\/usr\/bin\/zsh/g' package/base-files/files/etc/passwd

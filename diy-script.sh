@@ -12,6 +12,9 @@ shopt -s globstar
 # 添加NSS/12大内核支持等
 chmod +x $GITHUB_WORKSPACE/scripts/function.sh && $GITHUB_WORKSPACE/scripts/function.sh
 
+# 修改内核版本
+sed -i 's/KERNEL_PATCHVER:=*.*/KERNEL_PATCHVER:=6.6/g' target/linux/qualcommax/Makefile 
+
 update_feeds() {
     FEEDS_CONF="$OPENWRT_PATH/feeds.conf.default"
     # 删除注释行

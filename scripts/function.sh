@@ -173,10 +173,13 @@ function remove_package() {
 
 function add_daed() {
 # 删除不用插件
-remove_package daed luci-app-daed luci-app-ssr-plus
+# remove_package daed luci-app-daed
 # 添加额外插件
 git_sparse_clone master https://github.com/QiuSimons/luci-app-daed \
    daed luci-app-daed
+
+# 解决luci-app-daed 依赖问题
+mkdir -p package/libcron && wget -O package/libcron/Makefile https://raw.githubusercontent.com/immortalwrt/packages/refs/heads/master/libs/libcron/Makefile
 }
 
 function set_theme() {

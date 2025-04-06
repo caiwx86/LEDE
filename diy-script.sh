@@ -9,9 +9,6 @@ echo "当前网关IP: $WRT_IP"
 # 支持 ** 查找子目录
 shopt -s globstar
 
-# hotfix
-bash $GITHUB_WORKSPACE/hotfix.sh
-
 # 添加NSS/12大内核支持等
 chmod +x $GITHUB_WORKSPACE/scripts/function.sh && $GITHUB_WORKSPACE/scripts/function.sh
 
@@ -90,6 +87,16 @@ install_feeds() {
     done
 }
 
+# Git稀疏克隆，只克隆指定目录到本地
+function git_sparse_clone() {
+  branch="$1" repourl="$2" && shift 2
+  git clone --depth=1 -b $branch --single-branch --filter=blob:none --sparse $repourl
+  repodir=$(echo $repourl | awk -F '/' '{print $(NF)}')
+  cd $repodir && git sparse-checkout set $@
+  mv -f $@ ../package
+  cd .. && rm -rf $repodir
+}
+
 fix_default_set() {
     # 修改默认主题
     if [ -d "$OPENWRT_PATH/feeds/luci/collections/" ]; then
@@ -101,6 +108,8 @@ fix_default_set() {
     fi
 
     install -Dm755 "$GITHUB_WORKSPACE/scripts/patch/99_set_argon_primary" "$OPENWRT_PATH/package/base-files/files/etc/uci-defaults/99_set_argon_primary"
+
+    echo "CONFIG_PACKAGE_luci-theme-$WRT_THEME=y" >> $OPENWRT_PATH/.config
 }
 
 update_default_lan_addr() {
@@ -108,6 +117,7 @@ update_default_lan_addr() {
 
     if [ -f $CFG_PATH ]; then
         sed -i 's/192\.168\.[0-9]*\.[0-9]*/'$WRT_IP'/g' $CFG_PATH
+        sed -i "s/hostname='.*'/hostname='$WRT_NAME'/g" $CFG_PATH
     fi
 }
 
@@ -124,75 +134,82 @@ EOF
     fi
 }
 
+function add_amlogic() {
+    if [[ $AMLOGIC == "true" ]]; then
+        # 晶晨宝盒
+        # git_sparse_clone main https://github.com/ophub/luci-app-amlogic luci-app-amlogic
+        sed -i "s|firmware_repo.*|firmware_repo 'https://github.com/caiwx86/OpenWrt'|g" package/kenzok8/luci-app-amlogic/root/etc/config/amlogic
+        sed -i "s|kernel_path.*|kernel_path 'https://github.com/ophub/kernel'|g" package/kenzok8/luci-app-amlogic/root/etc/config/amlogic
+        sed -i "s|shared_fstype.*|shared_fstype 'btrfs'|g" package/kenzok8/luci-app-amlogic/root/etc/config/amlogic
+        #sed -i "s|ARMv8|ARMv8_PLUS|g" package/luci-app-amlogic/root/etc/config/amlogic
+        echo CONFIG_PACKAGE_luci-app-amlogic=y >>  $OPENWRT_PATH/.config
+    fi
+}
+
+function set_menu_app() {
+    # luci23.05
+    # 调整 ttyd 到 系统 菜单
+    sed -i 's/admin\/services/admin\/system/g'  feeds/luci/applications/luci-app-ttyd/root/usr/share/luci/menu.d/*.json
+    # 调整 带宽监控 到 网络 菜单
+    sed -i 's/admin\/services/admin\/network/g' feeds/luci/applications/luci-app-nlbwmon/root/usr/share/luci/menu.d/*.json
+    # 调整 网络共享 到 NAS 菜单
+    sed -i 's/admin\/services/admin\/network/g' feeds/luci/applications/luci-app-samba4/root/usr/share/luci/menu.d/*.json
+    # 调整 UPNP 到 网络 菜单
+    sed -i 's/admin\/services/admin\/network/g' feeds/luci/applications/luci-app-upnp/root/usr/share/luci/menu.d/*.json
+    # 调整 Wireguard 到 网络 菜单 
+    sed -i 's/admin\/status/admin\/network/g'   feeds/luci/protocols/luci-proto-wireguard/root/usr/share/luci/menu.d/*.json
+    #调整位置
+    sed -i 's/services/system/g' $(find ./feeds/luci/applications/luci-app-ttyd/root/usr/share/luci/menu.d/ -type f -name "luci-app-ttyd.json")
+    sed -i '3 a\\t\t"order": 10,' $(find ./feeds/luci/applications/luci-app-ttyd/root/usr/share/luci/menu.d/ -type f -name "luci-app-ttyd.json")
+    sed -i 's/services/network/g' $(find ./feeds/luci/applications/luci-app-upnp/root/usr/share/luci/menu.d/ -type f -name "luci-app-upnp.json")
+    sed -i 's/services/nas/g' $(find ./feeds/luci/applications/luci-app-alist/root/usr/share/luci/menu.d/ -type f -name "luci-app-alist.json")
+    sed -i 's/services/nas/g' $(find ./feeds/luci/applications/luci-app-samba4/root/usr/share/luci/menu.d/ -type f -name "luci-app-samba4.json")
+}
+
 function set_other() {
-#修改默认主题
-sed -i "s/luci-theme-bootstrap/luci-theme-$WRT_THEME/g" $(find ./feeds/luci/collections/ -type f -name "Makefile")
 
-CFG_FILE="$OPENWRT_PATH/package/base-files/files/bin/config_generate"
-if [ -f "$CFG_FILE" ]; then
-#修改默认IP地址
-sed -i "s/192\.168\.[0-9]*\.[0-9]*/$WRT_IP/g" $CFG_FILE
-sed -i "s/hostname='.*'/hostname='$WRT_NAME'/g" $CFG_FILE
-fi
-#LEDE平台调整
-CFG_FILE_LEDE="$OPENWRT_PATH/package/base-files/luci2/bin/config_generate"
-if [ -f "$CFG_FILE_LEDE" ]; then
-sed -i "s/192\.168\.[0-9]*\.[0-9]*/$WRT_IP/g" $CFG_FILE_LEDE
-sed -i "s/hostname='.*'/hostname='$WRT_NAME'/g" $CFG_FILE_LEDE
-fi
+    # 在线用户
+    git_sparse_clone main https://github.com/danchexiaoyang/luci-app-onliner luci-app-onliner 
 
-WRT_IPPART=$(echo $WRT_IP | cut -d'.' -f1-3)
-#修复Openvpnserver无法连接局域网和外网问题
-if [ -f "./package/network/config/firewall/files/firewall.user" ]; then
-    echo "iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o br-lan -j MASQUERADE" >> ./package/network/config/firewall/files/firewall.user
-    echo "OpenVPN Server has been fixed and is now accessible on the network!"
-fi
-#修复Openvpnserver默认配置的网关地址与无法多终端同时连接问题
-if [ -f "./package/feeds/luci/luci-app-openvpn-server/root/etc/config/openvpn" ]; then
-    echo "	option duplicate_cn '1'" >> ./package/feeds/luci/luci-app-openvpn-server/root/etc/config/openvpn
-    echo "OpenVPN Server has been fixed to resolve the issue of duplicate connecting!"
-    sed -i "s/192.168.1.1/$WRT_IPPART.1/g" ./package/feeds/luci/luci-app-openvpn-server/root/etc/config/openvpn
-    sed -i "s/192.168.1.0/$WRT_IPPART.0/g" ./package/feeds/luci/luci-app-openvpn-server/root/etc/config/openvpn
-    echo "OpenVPN Server has been fixed the default gateway address!"
-fi
-echo "CONFIG_PACKAGE_luci-theme-$WRT_THEME=y" >> $OPENWRT_PATH/.config
+    # adguardhome
+    bash $GITHUB_WORKSPACE/scripts/preset-adguardhome.sh
 
-# 更改默认 Shell 为 zsh
-sed -i 's/\/bin\/ash/\/usr\/bin\/zsh/g' package/base-files/files/etc/passwd
+    # 更改默认 Shell 为 zsh
+    sed -i 's/\/bin\/ash/\/usr\/bin\/zsh/g' package/base-files/files/etc/passwd
 
-# 修改 Docker 路径
-if [ -f "package/luci-app-docker/root/etc/docker/daemon.json" ]; then
-sed -i "s|\"data-root\": \"/opt/\",|\"data-root\": \"/opt/docker/\",|" package/luci-app-docker/root/etc/docker/daemon.json
-fi
-if [ -f "feeds/luci/applications/luci-app-docker/root/etc/docker/daemon.json" ]; then
-sed -i "s|\"data-root\": \"/opt/\",|\"data-root\": \"/opt/docker/\",|" feeds/luci/applications/luci-app-docker/root/etc/docker/daemon.json
-fi
+    # 修改 Docker 路径
+    if [ -f "package/luci-app-docker/root/etc/docker/daemon.json" ]; then
+        sed -i "s|\"data-root\": \"/opt/\",|\"data-root\": \"/opt/docker/\",|" package/luci-app-docker/root/etc/docker/daemon.json
+    fi
+    if [ -f "feeds/luci/applications/luci-app-docker/root/etc/docker/daemon.json" ]; then
+        sed -i "s|\"data-root\": \"/opt/\",|\"data-root\": \"/opt/docker/\",|" feeds/luci/applications/luci-app-docker/root/etc/docker/daemon.json
+    fi
 
-# TTYD 免登录
-sed -i 's|/bin/login|/bin/login -f root|g' feeds/packages/utils/ttyd/files/ttyd.config
+    # TTYD 免登录
+    sed -i 's|/bin/login|/bin/login -f root|g' feeds/packages/utils/ttyd/files/ttyd.config
 
-# x86 型号只显示 CPU 型号
-sed -i 's/${g}.*/${a}${b}${c}${d}${e}${f}${hydrid}/g' package/lean/autocore/files/x86/autocore
+    # x86 型号只显示 CPU 型号
+    sed -i 's/${g}.*/${a}${b}${c}${d}${e}${f}${hydrid}/g' package/lean/autocore/files/x86/autocore
 
-# 修改本地时间格式
-sed -i 's/os.date()/os.date("%a %Y-%m-%d %H:%M:%S")/g' package/lean/autocore/files/*/index.htm
+    # 修改本地时间格式
+    sed -i 's/os.date()/os.date("%a %Y-%m-%d %H:%M:%S")/g' package/lean/autocore/files/*/index.htm
 
-# 修改版本为编译日期
-date_version=$(date +"%y.%m.%d")
-orig_version=$(cat "package/lean/default-settings/files/zzz-default-settings" | grep DISTRIB_REVISION= | awk -F "'" '{print $2}')
-sed -i "s/${orig_version}/R${date_version} by Caiwx/g" package/lean/default-settings/files/zzz-default-settings
+    # 修改版本为编译日期
+    date_version=$(date +"%y.%m.%d")
+    orig_version=$(cat "package/lean/default-settings/files/zzz-default-settings" | grep DISTRIB_REVISION= | awk -F "'" '{print $2}')
+    sed -i "s/${orig_version}/R${date_version} by Caiwx/g" package/lean/default-settings/files/zzz-default-settings
 
-# 修复 armv8 设备 xfsprogs 报错
-sed -i 's/TARGET_CFLAGS.*/TARGET_CFLAGS += -DHAVE_MAP_SYNC -D_LARGEFILE64_SOURCE/g' feeds/packages/utils/xfsprogs/Makefile
+    # 修复 armv8 设备 xfsprogs 报错
+    sed -i 's/TARGET_CFLAGS.*/TARGET_CFLAGS += -DHAVE_MAP_SYNC -D_LARGEFILE64_SOURCE/g' feeds/packages/utils/xfsprogs/Makefile
 
-# 修改 Makefile
-find package/*/ -maxdepth 2 -path "*/Makefile" | xargs -i sed -i 's/..\/..\/luci.mk/$(TOPDIR)\/feeds\/luci\/luci.mk/g' {}
-find package/*/ -maxdepth 2 -path "*/Makefile" | xargs -i sed -i 's/..\/..\/lang\/golang\/golang-package.mk/$(TOPDIR)\/feeds\/packages\/lang\/golang\/golang-package.mk/g' {}
-find package/*/ -maxdepth 2 -path "*/Makefile" | xargs -i sed -i 's/PKG_SOURCE_URL:=@GHREPO/PKG_SOURCE_URL:=https:\/\/github.com/g' {}
-find package/*/ -maxdepth 2 -path "*/Makefile" | xargs -i sed -i 's/PKG_SOURCE_URL:=@GHCODELOAD/PKG_SOURCE_URL:=https:\/\/codeload.github.com/g' {}
+    # 修改 Makefile
+    find package/*/ -maxdepth 2 -path "*/Makefile" | xargs -i sed -i 's/..\/..\/luci.mk/$(TOPDIR)\/feeds\/luci\/luci.mk/g' {}
+    find package/*/ -maxdepth 2 -path "*/Makefile" | xargs -i sed -i 's/..\/..\/lang\/golang\/golang-package.mk/$(TOPDIR)\/feeds\/packages\/lang\/golang\/golang-package.mk/g' {}
+    find package/*/ -maxdepth 2 -path "*/Makefile" | xargs -i sed -i 's/PKG_SOURCE_URL:=@GHREPO/PKG_SOURCE_URL:=https:\/\/github.com/g' {}
+    find package/*/ -maxdepth 2 -path "*/Makefile" | xargs -i sed -i 's/PKG_SOURCE_URL:=@GHCODELOAD/PKG_SOURCE_URL:=https:\/\/codeload.github.com/g' {}
 
-# DNSMASQ DNSSERVER
-sed -i 's/DNS_SERVERS=\"\"/DNS_SERVERS=\"223.5.5.5 8.8.4.4\"/g' package/network/services/dnsmasq/files/dnsmasq.init
+    # DNSMASQ DNSSERVER
+    sed -i 's/DNS_SERVERS=\"\"/DNS_SERVERS=\"223.5.5.5 8.8.4.4\"/g' package/network/services/dnsmasq/files/dnsmasq.init
 }
 
 main() {
@@ -201,6 +218,8 @@ main() {
     fix_default_set
     update_default_lan_addr
     add_backup_info_to_sysupgrade
+    add_amlogic
+    set_menu_app
     set_other
     install_feeds
 }

@@ -78,7 +78,7 @@ install_small8() {
 
 install_feeds() {
     ./scripts/feeds update -i
-    for dir in $BUILD_DIR/feeds/*; do
+    for dir in ./feeds/*; do
         # 检查是否为目录并且不以 .tmp 结尾，并且不是软链接
         if [ -d "$dir" ] && [[ ! "$dir" == *.tmp ]] && [ ! -L "$dir" ]; then
             if [[ $(basename "$dir") == "small8" ]]; then
@@ -206,6 +206,3 @@ main() {
 }
 
 main "$@"
-
-./scripts/feeds update -a
-./scripts/feeds install -af

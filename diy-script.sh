@@ -9,9 +9,6 @@ echo "当前网关IP: $WRT_IP"
 # 支持 ** 查找子目录
 shopt -s globstar
 
-# 添加NSS/12大内核支持等
-chmod +x $GITHUB_WORKSPACE/scripts/function.sh && $GITHUB_WORKSPACE/scripts/function.sh
-
 # 修改内核版本
 # sed -i 's/KERNEL_PATCHVER:=*.*/KERNEL_PATCHVER:=6.6/g' target/linux/qualcommax/Makefile 
 
@@ -172,6 +169,8 @@ function set_menu_app() {
 
 function set_other() {
 
+    # 添加NSS/12大内核支持等
+    chmod +x $GITHUB_WORKSPACE/scripts/function.sh && $GITHUB_WORKSPACE/scripts/function.sh
     # 在线用户
     git_sparse_clone main https://github.com/danchexiaoyang/luci-app-onliner luci-app-onliner 
 

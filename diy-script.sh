@@ -169,8 +169,6 @@ function set_menu_app() {
 
 function set_other() {
 
-    # 添加NSS/12大内核支持等
-    chmod +x $GITHUB_WORKSPACE/scripts/function.sh && $GITHUB_WORKSPACE/scripts/function.sh
     # 在线用户
     git_sparse_clone main https://github.com/danchexiaoyang/luci-app-onliner luci-app-onliner 
 
@@ -225,6 +223,8 @@ main() {
     set_menu_app
     set_other
     install_feeds
+    # 添加NSS/12大内核支持等
+    chmod +x $GITHUB_WORKSPACE/scripts/function.sh && $GITHUB_WORKSPACE/scripts/function.sh
 }
 
 main "$@"

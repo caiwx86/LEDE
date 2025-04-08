@@ -217,5 +217,6 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         tag_name: R${{ env.DATE }} for ${{ env.FIRMWARE_TAG }}
+        token: ${{ secrets.GITHUB_TOKEN }}
         files: ${{ env.FIRMWARE_PATH }}/*
         body_path: ./release_body.txt

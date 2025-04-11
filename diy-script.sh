@@ -1,4 +1,19 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -e
+set -o errexit
+set -o errtrace
+
+# 定义错误处理函数
+error_handler() {
+    echo "Error occurred in script at line: ${BASH_LINENO[0]}, command: '${BASH_COMMAND}'"
+}
+
+# 设置trap捕获ERR信号
+trap 'error_handler' ERR
+
+source /etc/profile
+
 echo "execute diy-script.sh"
 #自定义所有设置
 WRT_IP=10.0.10.1
@@ -170,7 +185,7 @@ function set_menu_app() {
 function set_other() {
 
     # 添加NSS/12大内核支持等
-    chmod +x $GITHUB_WORKSPACE/scripts/function.sh && $GITHUB_WORKSPACE/scripts/function.sh
+    # chmod +x $GITHUB_WORKSPACE/scripts/function.sh && $GITHUB_WORKSPACE/scripts/function.sh
 
     # 在线用户
     git_sparse_clone main https://github.com/danchexiaoyang/luci-app-onliner luci-app-onliner 
@@ -217,6 +232,7 @@ function set_other() {
 }
 
 main() {
+    echo "main() begin..."
     update_feeds
     remove_unwanted_packages
     fix_default_set
@@ -226,6 +242,7 @@ main() {
     set_menu_app
     set_other
     install_feeds
+    echo "main() end..."
 }
 
 main "$@"

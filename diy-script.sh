@@ -182,6 +182,14 @@ function set_menu_app() {
     sed -i 's/services/nas/g' $(find ./feeds/luci/applications/luci-app-samba4/root/usr/share/luci/menu.d/ -type f -name "luci-app-samba4.json")
 }
 
+function remove_lede_package() {
+    # 移除不需要的包
+    rm -rf feeds/luci/themes/{luci-theme-argon,luci-theme-netgear}
+    rm -rf feeds/packages/net/{mosdns,smartdns,v2ray-geodata}
+    rm -rf feeds/luci/applications/{luci-app-vlmcsd,luci-app-accesscontrol,luci-app-ddns,luci-app-wol,luci-app-kodexplorer}
+    rm -rf feeds/luci/applications/{luci-app-smartdns,luci-app-v2raya,luci-app-mosdns,luci-app-serverchan,luci-app-passwall2}
+}
+
 function set_other() {
 
     # 添加NSS/12大内核支持等
@@ -240,6 +248,7 @@ main() {
     add_backup_info_to_sysupgrade
     add_amlogic
     set_menu_app
+    remove_lede_package
     set_other
     install_feeds
     echo "main() end..."

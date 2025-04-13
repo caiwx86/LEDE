@@ -25,7 +25,7 @@ echo "当前网关IP: $WRT_IP"
 shopt -s globstar
 
 # 修改内核版本
-# sed -i 's/KERNEL_PATCHVER:=*.*/KERNEL_PATCHVER:=6.12/g' target/linux/qualcommax/Makefile 
+sed -i 's/KERNEL_PATCHVER:=*.*/KERNEL_PATCHVER:=6.6/g' target/linux/qualcommax/Makefile 
 
 update_feeds() {
     FEEDS_CONF="$OPENWRT_PATH/feeds.conf.default"

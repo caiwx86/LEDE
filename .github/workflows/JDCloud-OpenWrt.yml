@@ -179,6 +179,7 @@ jobs:
         mv -f $OPENWRT_PATH/bin/packages/*/*/*.ipk packages
         tar -zcf Packages.tar.gz packages
         rm -rf packages feeds.buildinfo version.buildinfo
+        echo "KERNEL=$(cat *.manifest | grep ^kernel | cut -d- -f2 | tr -d ' ')" >> $GITHUB_ENV
         echo "FIRMWARE_PATH=$PWD" >> $GITHUB_ENV
 
     - name: Upload Firmware To Artifact
@@ -191,8 +192,8 @@ jobs:
     - name: Prepare Release Body
       run: |
         echo "云编译发布" > release_body.txt
-        echo "源码：${{ env.BUILD_SRC }}" >> release_body.txt
-        echo "Kernel: ${{ env.KVER }}" >> release_body.txt
+        echo "源码：${{ env.REPO_URL }}" >> release_body.txt
+        echo "Kernel: ${{ env.KERNEL }}" >> release_body.txt
         echo "WIFI密码: 12345678" >> release_body.txt
         echo "LAN地址: 10.0.10.1" >> release_body.txt
         echo "**This is OpenWrt Firmware for ${{ env.FIRMWARE_TAG }}**" >> release_body.txt 

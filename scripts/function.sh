@@ -133,10 +133,15 @@ function generate_config() {
   #配置文件不存在
   if [[ ! -f $config_file ]]; then
       echo $config_file 文件不存在
+      touch $config_file
+      echo "###################"
+      echo "# 创建配置文件.config  成功 ..."
+      echo "###################"
       exit
   else
-      touch $config_file
-      echo "# function.sh ..." >> $config_file
+      echo "###################"
+      echo "# function.sh ..."
+      echo "###################"
   fi
 
   #默认机型为ipq60xx

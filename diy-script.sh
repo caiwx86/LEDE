@@ -232,7 +232,6 @@ function set_other() {
 
 main() {
     echo "main() begin..."
-    update_config
     update_feeds
     remove_unwanted_packages
     fix_default_set
@@ -241,6 +240,7 @@ main() {
     add_amlogic
     set_menu_app
     remove_lede_package
+    update_config
     set_other
     install_feeds
     echo "main() end..."

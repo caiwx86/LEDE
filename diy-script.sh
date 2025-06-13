@@ -263,7 +263,7 @@ function set_other() {
 
 main() {
     echo "main() begin..."
-    clean_up
+    # clean_up
     update_feeds
     remove_unwanted_packages
     fix_default_set

@@ -1,19 +1,5 @@
 #!/usr/bin/env bash
 
-set -e
-set -o errexit
-set -o errtrace
-
-# 定义错误处理函数
-error_handler() {
-    echo "Error occurred in script at line: ${BASH_LINENO[0]}, command: '${BASH_COMMAND}'"
-}
-
-# 设置trap捕获ERR信号
-trap 'error_handler' ERR
-
-source /etc/profile
-
 echo "execute diy-script.sh"
 #自定义所有设置
 WRT_IP=10.0.10.1
@@ -26,6 +12,17 @@ shopt -s globstar
 
 # 修改内核版本
 sed -i 's/KERNEL_PATCHVER:=*.*/KERNEL_PATCHVER:=6.12/g' target/linux/qualcommax/Makefile 
+
+update_config() {
+    MY_CONFIG="$OPENWRT_PATH/.my_config"
+    if [ -e $MY_CONFIG ]; then
+        echo "使用 .my_config 文件更新配置..."
+        cat $MY_CONFIG
+        # 如果存在 .my_config 文件，则使用该文件更新配置
+        cat $MY_CONFIG >> $OPENWRT_PATH/.config
+        echo ".my_config 文件 已更新配置..."
+    fi
+}
 
 update_feeds() {
     FEEDS_CONF="$OPENWRT_PATH/feeds.conf.default"
@@ -235,6 +232,7 @@ function set_other() {
 
 main() {
     echo "main() begin..."
+    update_config
     update_feeds
     remove_unwanted_packages
     fix_default_set

@@ -136,9 +136,9 @@ function add_amlogic() {
     if [[ $AMLOGIC == "true" ]]; then
         # 晶晨宝盒
         # git_sparse_clone main https://github.com/ophub/luci-app-amlogic luci-app-amlogic
-        sed -i "s|firmware_repo.*|firmware_repo 'https://github.com/caiwx86/OpenWrt'|g" package/kenzok8/luci-app-amlogic/root/etc/config/amlogic
-        sed -i "s|kernel_path.*|kernel_path 'https://github.com/ophub/kernel'|g" package/kenzok8/luci-app-amlogic/root/etc/config/amlogic
-        sed -i "s|shared_fstype.*|shared_fstype 'btrfs'|g" package/kenzok8/luci-app-amlogic/root/etc/config/amlogic
+        sed -i "s|firmware_repo.*|firmware_repo 'https://github.com/caiwx86/OpenWrt'|g" feeds/small8/luci-app-amlogic/root/etc/config/amlogic
+        sed -i "s|kernel_path.*|kernel_path 'https://github.com/ophub/kernel'|g" feeds/small8/luci-app-amlogic/root/etc/config/amlogic
+        sed -i "s|shared_fstype.*|shared_fstype 'btrfs'|g" feeds/small8/luci-app-amlogic/root/etc/config/amlogic
         #sed -i "s|ARMv8|ARMv8_PLUS|g" package/luci-app-amlogic/root/etc/config/amlogic
         echo CONFIG_PACKAGE_luci-app-amlogic=y >>  $OPENWRT_PATH/.config
     fi

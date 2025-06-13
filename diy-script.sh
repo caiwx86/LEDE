@@ -20,7 +20,8 @@ update_feeds() {
         [ -z "$(tail -c 1 "$FEEDS_CONF")" ] || echo "" >>"$FEEDS_CONF"
         echo "src-git small8 https://github.com/kenzok8/small-package" >>"$FEEDS_CONF"
     fi
-    
+
+    ./scripts/feeds clean
     # 更新 feeds
     ./scripts/feeds update -a
 }
@@ -71,7 +72,7 @@ install_small8() {
 }
 
 install_feeds() {
-    ./scripts/feeds update -a
+    ./scripts/feeds update -i
     for dir in $OPENWRT_PATH/feeds/*; do
         # 检查是否为目录并且不以 .tmp 结尾，并且不是软链接
         if [ -d "$dir" ] && [[ ! "$dir" == *.tmp ]] && [ ! -L "$dir" ]; then
@@ -214,12 +215,6 @@ function set_other() {
     sed -i 's/DNS_SERVERS=\"\"/DNS_SERVERS=\"223.5.5.5 8.8.4.4\"/g' package/network/services/dnsmasq/files/dnsmasq.init
 }
 
-update_and_install_feeds() {
-    echo "Updating and installing feeds..."
-    ./scripts/feeds update -a
-    ./scripts/feeds install -a
-}
-
 main() {
     echo "main() begin..."
     update_feeds
@@ -231,8 +226,7 @@ main() {
     set_menu_app
     remove_lede_package
     set_other
-    update_and_install_feeds
-    # install_feeds
+    install_feeds
     echo "main() end..."
 }
 

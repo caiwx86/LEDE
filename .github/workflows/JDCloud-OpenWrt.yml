@@ -135,7 +135,10 @@ jobs:
 
     - name: Load Custom Configuration
       run: |
+        echo "Loading custom configuration..."
+        [ -e $OPENWRT_PATH/.config ] && chmod 777 $OPENWRT_PATH/.config
         [ -e files ] && mv files $OPENWRT_PATH/files
+        chmod 777 $CONFIG_FILE
         [ -e $CONFIG_FILE ] && cp $CONFIG_FILE $OPENWRT_PATH/.my_config
         chmod +x $GITHUB_WORKSPACE/scripts/*.sh
         chmod +x $DIY_SCRIPT

@@ -33,7 +33,6 @@ update_feeds() {
     fi
     
     # 更新 feeds
-    ./scripts/feeds clean
     ./scripts/feeds update -a
 }
 
@@ -83,7 +82,7 @@ install_small8() {
 }
 
 install_feeds() {
-    ./scripts/feeds update -i
+    ./scripts/feeds update -a
     for dir in $OPENWRT_PATH/feeds/*; do
         # 检查是否为目录并且不以 .tmp 结尾，并且不是软链接
         if [ -d "$dir" ] && [[ ! "$dir" == *.tmp ]] && [ ! -L "$dir" ]; then

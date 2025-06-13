@@ -111,7 +111,26 @@ function git_sparse_clone() {
   cd .. && rm -rf $repodir
 }
 
+function remove_package() {
+   packages="$@"
+   for package in $packages; do 
+      pkg_path=$(find . -name "$package")
+      if [[ ! "$pkg_path" == "" ]]; then
+         rm -rvf $pkg_path
+      fi
+   done
+}
+
 fix_default_set() {
+    remove_package luci-app-argon-config luci-theme-argon 
+    git_sparse_clone openwrt-24.10 https://github.com/sbwml/luci-theme-argon \
+         luci-app-argon-config luci-theme-argon 
+
+    argon_css_file=$(find ./package/luci-theme-argon/ -type f -name "cascade.css")
+     #修改字体
+    sed -i "/^.main .main-left .nav li a {/,/^}/ { /font-weight: bolder/d }" $argon_css_file
+    sed -i '/^\[data-page="admin-system-opkg"\] #maincontent>.container {/,/}/ s/font-weight: 600;/font-weight: normal;/' $argon_css_file
+
     # 修改默认主题
     if [ -d "$OPENWRT_PATH/feeds/luci/collections/" ]; then
         find "$OPENWRT_PATH/feeds/luci/collections/" -type f -name "Makefile" -exec sed -i "s/luci-theme-bootstrap/luci-theme-$WRT_THEME/g" {} \;
@@ -119,6 +138,10 @@ fix_default_set() {
 
     if [ -d "$OPENWRT_PATH/feeds/small8/luci-theme-argon" ]; then
         find "$OPENWRT_PATH/feeds/small8/luci-theme-argon" -type f -name "cascade*" -exec sed -i 's/--bar-bg/--primary/g' {} \;
+    fi
+    
+    if [ -d "$OPENWRT_PATH/package/luci-theme-argon" ]; then
+        find "$OPENWRT_PATH/package/luci-theme-argon" -type f -name "cascade*" -exec sed -i 's/--bar-bg/--primary/g' {} \;
     fi
 
     install -Dm755 "$GITHUB_WORKSPACE/scripts/patch/99_set_argon_primary" "$OPENWRT_PATH/package/base-files/files/etc/uci-defaults/99_set_argon_primary"
@@ -158,6 +181,13 @@ function add_amlogic() {
         #sed -i "s|ARMv8|ARMv8_PLUS|g" package/luci-app-amlogic/root/etc/config/amlogic
         echo CONFIG_PACKAGE_luci-app-amlogic=y >>  $OPENWRT_PATH/.config
     fi
+}
+
+function add_nps() {
+  git_sparse_clone main https://github.com/kiddin9/kwrt-packages \
+      nps luci-app-npc
+  # echo CONFIG_PACKAGE_nps=y >>  $OPENWRT_PATH/.config
+  # echo CONFIG_PACKAGE_luci-app-npc=y >>  $OPENWRT_PATH/.config
 }
 
 function set_menu_app() {
@@ -242,6 +272,7 @@ main() {
     add_amlogic
     set_menu_app
     remove_lede_package
+    add_nps
     set_other
     install_feeds
     echo "main() end..."

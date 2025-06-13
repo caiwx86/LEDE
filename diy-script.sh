@@ -12,9 +12,9 @@ sed -i 's/KERNEL_PATCHVER:=*.*/KERNEL_PATCHVER:=6.12/g' target/linux/qualcommax/
 clean_up() {
     BUILD_DIR="$OPENWRT_PATH"
     cd $BUILD_DIR
-    #if [[ -f $BUILD_DIR/.config ]]; then
-    #    \rm -f $BUILD_DIR/.config
-    #fi
+    if [[ -f $BUILD_DIR/.config ]]; then
+        \rm -f $BUILD_DIR/.config
+    fi
     if [[ -d $BUILD_DIR/tmp ]]; then
         \rm -rf $BUILD_DIR/tmp
     fi

@@ -148,9 +148,9 @@ function generate_config() {
   local target='ipq60xx'
 
   # NSS参数配置 
-  if [[ $NSS_ENABLE == "true" ]]; then
-    set_nss_driver $config_file
-  fi
+  #if [[ $NSS_ENABLE == "true" ]]; then
+  #  set_nss_driver $config_file
+  #fi
   # cat_usb_net $config_file
   #增加ebpf
   cat_ebpf_config $config_file

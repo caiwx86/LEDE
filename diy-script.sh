@@ -9,17 +9,6 @@ echo "当前网关IP: $WRT_IP"
 # 修改内核版本
 sed -i 's/KERNEL_PATCHVER:=*.*/KERNEL_PATCHVER:=6.12/g' target/linux/qualcommax/Makefile 
 
-update_config() {
-    MY_CONFIG="$OPENWRT_PATH/.my_config"
-    if [ -e $MY_CONFIG ]; then
-        echo "使用 .my_config 文件更新配置..."
-        # 如果存在 .my_config 文件，则使用该文件更新配置
-        cat $MY_CONFIG >> $OPENWRT_PATH/.config
-        echo ".my_config 文件 已更新配置..."
-        cat $OPENWRT_PATH/.config
-    fi
-}
-
 update_feeds() {
     FEEDS_CONF="$OPENWRT_PATH/feeds.conf.default"
     # 删除注释行
@@ -225,6 +214,12 @@ function set_other() {
     sed -i 's/DNS_SERVERS=\"\"/DNS_SERVERS=\"223.5.5.5 8.8.4.4\"/g' package/network/services/dnsmasq/files/dnsmasq.init
 }
 
+update_and_install_feeds() {
+    echo "Updating and installing feeds..."
+    ./scripts/feeds update -a
+    ./scripts/feeds install -a
+}
+
 main() {
     echo "main() begin..."
     update_feeds
@@ -235,9 +230,9 @@ main() {
     add_amlogic
     set_menu_app
     remove_lede_package
-    update_config
     set_other
-    install_feeds
+    update_and_install_feeds
+    # install_feeds
     echo "main() end..."
 }
 

@@ -9,6 +9,22 @@ echo "当前网关IP: $WRT_IP"
 # 修改内核版本
 sed -i 's/KERNEL_PATCHVER:=*.*/KERNEL_PATCHVER:=6.12/g' target/linux/qualcommax/Makefile 
 
+clean_up() {
+    BUILD_DIR="$OPENWRT_PATH"
+    cd $BUILD_DIR
+    #if [[ -f $BUILD_DIR/.config ]]; then
+    #    \rm -f $BUILD_DIR/.config
+    #fi
+    if [[ -d $BUILD_DIR/tmp ]]; then
+        \rm -rf $BUILD_DIR/tmp
+    fi
+    if [[ -d $BUILD_DIR/logs ]]; then
+        \rm -rf $BUILD_DIR/logs/*
+    fi
+    mkdir -p $BUILD_DIR/tmp
+    echo "1" >$BUILD_DIR/tmp/.build
+}
+
 update_feeds() {
     FEEDS_CONF="$OPENWRT_PATH/feeds.conf.default"
     # 删除注释行
@@ -217,6 +233,7 @@ function set_other() {
 
 main() {
     echo "main() begin..."
+    clean_up
     update_feeds
     remove_unwanted_packages
     fix_default_set

@@ -1,4 +1,17 @@
 #!/usr/bin/env bash
+set -e
+set -o errexit
+set -o errtrace
+
+# 定义错误处理函数
+error_handler() {
+    echo "Error occurred in script at line: ${BASH_LINENO[0]}, command: '${BASH_COMMAND}'"
+}
+
+# 设置trap捕获ERR信号
+trap 'error_handler' ERR
+
+source /etc/profile
 
 echo "execute diy-script.sh"
 #自定义所有设置

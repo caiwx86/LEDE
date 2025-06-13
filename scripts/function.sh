@@ -1,5 +1,7 @@
 #!/bin/bash
 
+config_file=".config"
+
 BASE_PATH=$1
 if [[ -d $BASE_PATH ]]; then
    cd $BASE_PATH
@@ -128,11 +130,13 @@ EOF
 
 function generate_config() {
   echo "执行generate_config()"
-  config_file=".config"
   #配置文件不存在
   if [[ ! -f $config_file ]]; then
       echo $config_file 文件不存在
       exit
+  else
+      touch $config_file
+      echo "# function.sh ..." >> $config_file
   fi
 
   #默认机型为ipq60xx
@@ -157,7 +161,7 @@ function git_sparse_clone() {
   git clone --depth=1 -b $branch --single-branch --filter=blob:none --sparse $repourl
   repodir=$(echo $repourl | awk -F '/' '{print $(NF)}')
   cd $repodir && git sparse-checkout set $@
-  mv -f $@ ../package
+  mv -f $@ ../package 
   cd .. && rm -rf $repodir
 }
 
@@ -172,39 +176,36 @@ function remove_package() {
 }
 
 function add_daed() {
-# 删除不用插件
-remove_package daed luci-app-daed
-# 添加额外插件
-git_sparse_clone master https://github.com/QiuSimons/luci-app-daed \
-   daed luci-app-daed
+  # 删除不用插件
+  remove_package daed luci-app-daed
+  # 添加额外插件
+  git_sparse_clone master https://github.com/QiuSimons/luci-app-daed \
+      daed luci-app-daed
 
-# 解决luci-app-daed 依赖问题
-mkdir -p package/libcron && wget -O package/libcron/Makefile https://raw.githubusercontent.com/immortalwrt/packages/refs/heads/master/libs/libcron/Makefile
+  # 解决luci-app-daed 依赖问题
+  if [[ ! -d "package/libcron" ]]; then
+     mkdir -p package/libcron && wget -O package/libcron/Makefile https://raw.githubusercontent.com/immortalwrt/packages/refs/heads/master/libs/libcron/Makefile
+  fi
 }
 
 function set_theme() {
-remove_package luci-app-argon-config luci-theme-argon 
-git_sparse_clone openwrt-24.10 https://github.com/sbwml/luci-theme-argon \
-   luci-app-argon-config luci-theme-argon 
+  remove_package luci-app-argon-config luci-theme-argon 
+  git_sparse_clone openwrt-24.10 https://github.com/sbwml/luci-theme-argon \
+     luci-app-argon-config luci-theme-argon 
 
-argon_css_file=$(find package/luci-theme-argon/ -type f -name "cascade.css")
-#修改字体
-sed -i "/^.main .main-left .nav li a {/,/^}/ { /font-weight: bolder/d }" $argon_css_file
-sed -i '/^\[data-page="admin-system-opkg"\] #maincontent>.container {/,/}/ s/font-weight: 600;/font-weight: normal;/' $argon_css_file
+  argon_css_file=$(find ./package/luci-theme-argon/ -type f -name "cascade.css")
+  #修改字体
+  sed -i "/^.main .main-left .nav li a {/,/^}/ { /font-weight: bolder/d }" $argon_css_file
+  sed -i '/^\[data-page="admin-system-opkg"\] #maincontent>.container {/,/}/ s/font-weight: 600;/font-weight: normal;/' $argon_css_file
 }
 
-function set_nss_usage() {
-#你没有神奇的NSS路由器我很难跟你解释
-USAGE_FILE="./package/lean/autocore/files/arm/sbin/usage"
-if [ -f "$USAGE_FILE" ]; then
-    cat $GITHUB_WORKSPACE/scripts/patch/usage > $USAGE_FILE
-fi
+function add_nps() {
+  git_sparse_clone main https://github.com/kiddin9/kwrt-packages \
+      nps luci-app-npc
 }
 
 # 主要执行程序
 add_daed
 set_theme
-if [[ $NSS_ENABLE == "true" ]]; then
-  set_nss_usage
-fi
+add_nps
 generate_config && cat $config_file

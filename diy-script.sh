@@ -27,22 +27,6 @@ shopt -s globstar
 # 修改内核版本
 sed -i 's/KERNEL_PATCHVER:=*.*/KERNEL_PATCHVER:=6.12/g' target/linux/qualcommax/Makefile 
 
-clean_up() {
-    BUILD_DIR=$OPENWRT_PATH
-    cd $BUILD_DIR
-    if [[ -f $BUILD_DIR/.config ]]; then
-        \rm -f $BUILD_DIR/.config
-    fi
-    if [[ -d $BUILD_DIR/tmp ]]; then
-        \rm -rf $BUILD_DIR/tmp
-    fi
-    if [[ -d $BUILD_DIR/logs ]]; then
-        \rm -rf $BUILD_DIR/logs/*
-    fi
-    mkdir -p $BUILD_DIR/tmp
-    echo "1" >$BUILD_DIR/tmp/.build
-}
-
 update_feeds() {
     FEEDS_CONF="$OPENWRT_PATH/feeds.conf.default"
     # 删除注释行
@@ -200,18 +184,6 @@ function remove_lede_package() {
     rm -rf feeds/luci/applications/{luci-app-smartdns,luci-app-v2raya,luci-app-mosdns,luci-app-serverchan,luci-app-passwall2}
 }
 
-function update_config() {
-    # 更新配置文件
-    config_file="$OPENWRT_PATH/.config"
-    my_config="$OPENWRT_PATH/.my_config"
-    if [[ -f $my_config ]]; then
-        # 如果存在 .my_config 文件，则将其内容追加到 .config 文件中
-        cat "$my_config" >> "$config_file"
-    else
-        echo "Warning: $my_config not found, skipping config update."
-    fi
-}
-
 function set_other() {
 
     # 添加NSS/12大内核支持等
@@ -263,8 +235,6 @@ function set_other() {
 
 main() {
     echo "main() begin..."
-    clean_up
-    update_config
     update_feeds
     remove_unwanted_packages
     fix_default_set

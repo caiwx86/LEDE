@@ -8,7 +8,7 @@ WRT_NAME=LEDE
 echo "当前网关IP: $WRT_IP"
 # 修改内核版本
 sed -i 's/KERNEL_PATCHVER:=*.*/KERNEL_PATCHVER:=6.12/g' target/linux/qualcommax/Makefile 
-sed -i 's/KERNEL_PATCHVER:=*.*/KERNEL_PATCHVER:=6.12/g' target/linux/rockchip/Makefile 
+# sed -i 's/KERNEL_PATCHVER:=*.*/KERNEL_PATCHVER:=6.12/g' target/linux/rockchip/Makefile 
 
 clean_up() {
     BUILD_DIR="$OPENWRT_PATH"

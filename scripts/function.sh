@@ -195,4 +195,4 @@ function add_daed() {
 
 # 主要执行程序
 add_daed
-generate_config && cat $config_file
+# generate_config && cat $config_file

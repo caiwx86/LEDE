@@ -1,7 +1,8 @@
 #!/bin/sh
 
 # AdGuard Home DHCP 租约文件路径
-ADGUARD_DHCP_FILE="/usr/bin/AdGuardHome/data/leases.json"
+ADGUARD_WORK_DIR=$(awk '/option workdir/ { gsub(/\047/, "", $3); print $3 }' /etc/config/AdGuardHome)
+ADGUARD_DHCP_FILE="$ADGUARD_WORK_DIR/data/leases.json"
 LEASES_TMP_FILE="/tmp/dhcp.leases"
 
 # 检查是否安装了 jq

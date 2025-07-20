@@ -133,24 +133,18 @@ function generate_config() {
   #配置文件不存在
   if [[ ! -f $config_file ]]; then
       echo $config_file 文件不存在
-      touch $config_file
-      echo "###################"
-      echo "# 创建配置文件.config  成功 ..."
-      echo "###################"
       exit
   else
-      echo "###################"
-      echo "# function.sh ..."
-      echo "###################"
+      echo "# function.sh ..." >> $config_file
   fi
 
   #默认机型为ipq60xx
   local target='ipq60xx'
 
   # NSS参数配置 
-  #if [[ $NSS_ENABLE == "true" ]]; then
-  #  set_nss_driver $config_file
-  #fi
+  if [[ $NSS_ENABLE == "true" ]]; then
+    set_nss_driver $config_file
+  fi
   # cat_usb_net $config_file
   #增加ebpf
   cat_ebpf_config $config_file
@@ -173,7 +167,7 @@ function git_sparse_clone() {
 function remove_package() {
    packages="$@"
    for package in $packages; do 
-      pkg_path=$(find . -name "$package")
+      pkg_path=$(find . -type d -name "$package")
       if [[ ! "$pkg_path" == "" ]]; then
          rm -rvf $pkg_path
       fi
@@ -187,12 +181,147 @@ function add_daed() {
   git_sparse_clone master https://github.com/QiuSimons/luci-app-daed \
       daed luci-app-daed
 
+  echo "CONFIG_PACKAGE_luci-app-daed=y" >> $config_file 
   # 解决luci-app-daed 依赖问题
   if [[ ! -d "package/libcron" ]]; then
-     mkdir -p package/libcron && wget -O package/libcron/Makefile https://raw.githubusercontent.com/immortalwrt/packages/refs/heads/master/libs/libcron/Makefile
+      mkdir -p package/libcron && wget -O package/libcron/Makefile https://raw.githubusercontent.com/immortalwrt/packages/refs/heads/master/libs/libcron/Makefile
   fi
 }
 
+function set_theme() {
+  remove_package luci-app-argon-config luci-theme-argon 
+  git_sparse_clone openwrt-24.10 https://github.com/sbwml/luci-theme-argon \
+     luci-app-argon-config luci-theme-argon 
+  # 添加argon主题配置
+  echo "CONFIG_PACKAGE_luci-app-argon-config=y" >> $config_file
+  echo "CONFIG_PACKAGE_luci-theme-argon=y" >> $config_file
+
+  argon_css_file=$(find ./package/luci-theme-argon/ -type f -name "cascade.css")
+  #修改字体
+  sed -i "/^.main .main-left .nav li a {/,/^}/ { /font-weight: bolder/d }" $argon_css_file
+  sed -i '/^\[data-page="admin-system-opkg"\] #maincontent>.container {/,/}/ s/font-weight: 600;/font-weight: normal;/' $argon_css_file
+
+  if [ -d "package/luci-theme-argon" ]; then
+     find "package/luci-theme-argon" -type f -name "cascade*" -exec sed -i 's/--bar-bg/--primary/g' {} \;
+  fi
+
+}
+
+function add_nps() {
+  remove_package nps npc luci-app-nps luci-app-npc
+  git_sparse_clone main https://github.com/djylb/nps-openwrt \
+      npc luci-app-npc
+  
+  echo "CONFIG_PACKAGE_luci-app-npc=y" >> $config_file
+}
+
+function add_watchdog() {
+  # 添加额外插件
+  git_sparse_clone main https://github.com/sirpdboy/luci-app-watchdog \
+      watchdog luci-app-watchdog 
+  echo "CONFIG_PACKAGE_luci-app-watchdog=y" >> $config_file
+}
+
+function add_netdata() {
+  remove_package netdata luci-app-netdata
+  git clone https://github.com/muink/openwrt-netdata-ssl package/netdata
+  git clone https://github.com/muink/luci-app-netdata package/luci-app-netdata
+  echo "CONFIG_PACKAGE_luci-app-netdata=y" >> $config_file
+}
+
+function add_other_package() {
+  echo "添加其他通插件"
+  # add other package
+  #impitool
+  echo "CONFIG_PACKAGE_ipmitool=y" >> $config_file
+  # jq
+  echo "CONFIG_PACKAGE_jq=y" >> $config_file
+  # gdisk
+  echo "CONFIG_PACKAGE_gdisk=y" >> $config_file
+}
+
+function add_adguardhome() {
+  if [[ ! -d "files/usr/bin" ]]; then
+    mkdir -p files/usr/bin
+  fi
+  # 复制AdGuardHome相关文件
+  echo "添加AdGuardHome相关文件"
+  cp $GITHUB_WORKSPACE/patches/custom/adguard_update_dhcp_leases.sh files/usr/bin/adguard_update_dhcp_leases.sh
+}
+
+function add_defaults_settings() {
+  # 添加默认设置脚本
+  if [[ ! -d "files/etc/uci-defaults" ]]; then
+    mkdir -p files/etc/uci-defaults
+  fi
+  cp $GITHUB_WORKSPACE/patches/custom/init-settings.sh files/etc/uci-defaults/99-init-settings
+}
+
+function add_dae() {
+  remove_package dae luci-app-dae
+  cp -rv $GITHUB_WORKSPACE/patches/custom/package/dae ./package/
+  cp -rv $GITHUB_WORKSPACE/patches/custom/package/luci-app-dae ./package/
+  echo "CONFIG_PACKAGE_luci-app-dae=y" >> $config_file
+}
+
+function add_geodata() {
+  remove_package v2ray-geodata
+  cp -rv $GITHUB_WORKSPACE/patches/custom/package/v2ray-geodata ./package/
+  echo "CONFIG_PACKAGE_v2ray-geodata-updater=y" >> $config_file
+  echo "CONFIG_PACKAGE_v2ray-geodata=y" >> $config_file
+}
+
+function add_mosdns() {
+  remove_package mosdns luci-app-mosdns v2dat
+  git_sparse_clone v5 https://github.com/sbwml/luci-app-mosdns \
+      mosdns luci-app-mosdns v2dat
+  echo "CONFIG_PACKAGE_luci-app-mosdns=y" >> $config_file
+}
+
+function add_netspeedtest() {
+  remove_package luci-app-netspeedtest
+  git_sparse_clone js https://github.com/sirpdboy/luci-app-netspeedtest \
+      luci-app-netspeedtest netspeedtest homebox speedtest-cli
+  echo "CONFIG_PACKAGE_luci-app-netspeedtest=y" >> $config_file
+}
+
+function add_wechatpush(){
+  remove_package luci-app-wechatpush
+  git clone --depth=1 -b master https://github.com/tty228/luci-app-wechatpush package/luci-app-wechatpush
+  echo "CONFIG_PACKAGE_luci-app-wechatpush=y" >> $config_file
+}
+
+function add_taskplan() {
+  remove_package luci-app-taskplan
+  git_sparse_clone master https://github.com/sirpdboy/luci-app-taskplan \
+      luci-app-taskplan
+  echo "CONFIG_PACKAGE_luci-app-taskplan=y" >> $config_file
+}
+
+function add_msd_lite() { 
+  remove_package msd_lite luci-app-msd_lite
+  git_sparse_clone main https://github.com/kiddin9/kwrt-packages \
+      msd_lite luci-app-msd_lite
+  echo "CONFIG_PACKAGE_luci-app-msd-lite=y" >> $config_file
+
+}
+
 # 主要执行程序
+# 解决配置文件未换行问题
+echo "" >> $config_file
+# add_dae
 add_daed
+set_theme
+add_nps
+add_watchdog
+add_geodata
+add_mosdns
+add_netdata
+add_adguardhome
+add_netspeedtest
+add_wechatpush
+add_taskplan
+add_msd_lite
+add_other_package
+add_defaults_settings
 # generate_config && cat $config_file

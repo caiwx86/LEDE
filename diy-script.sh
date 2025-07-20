@@ -216,13 +216,10 @@ function remove_lede_package() {
 function set_other() {
 
     # 添加NSS/12大内核支持等
-    chmod +x $GITHUB_WORKSPACE/scripts/function.sh && $GITHUB_WORKSPACE/scripts/function.sh
+    chmod +x $GITHUB_WORKSPACE/scripts/function.sh && $GITHUB_WORKSPACE/scripts/custom/function.sh
 
     # 在线用户
     git_sparse_clone main https://github.com/danchexiaoyang/luci-app-onliner luci-app-onliner 
-
-    # adguardhome
-    bash $GITHUB_WORKSPACE/scripts/preset-adguardhome.sh
 
     # 更改默认 Shell 为 zsh
     sed -i 's/\/bin\/ash/\/usr\/bin\/zsh/g' package/base-files/files/etc/passwd

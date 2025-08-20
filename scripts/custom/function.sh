@@ -179,10 +179,15 @@ function add_daed() {
   remove_package daed luci-app-daed
   # 添加额外插件
   git_sparse_clone master https://github.com/QiuSimons/luci-app-daed \
-      daed luci-app-daed
-
+      daed luci-app-daed 
+  #修复daed/Makefile
+  if [ -f "package/daed/Makefile" ]; then
+      rm -rf package/daed/Makefile && cp -r $GITHUB_WORKSPACE/patches/custom/patch/daed/Makefile package/daed/
+      cat package/daed/Makefile
+  fi
+  # 添加daed配置
   echo "CONFIG_PACKAGE_luci-app-daed=y" >> $config_file 
-  # 解决luci-app-daed 依赖问题
+  # 解决luci-app-daed 依赖问题, 该问题存在于LEDE库
   if [[ ! -d "package/libcron" ]]; then
       mkdir -p package/libcron && wget -O package/libcron/Makefile https://raw.githubusercontent.com/immortalwrt/packages/refs/heads/master/libs/libcron/Makefile
   fi
@@ -260,6 +265,9 @@ function add_defaults_settings() {
 function add_dae() {
   remove_package dae luci-app-dae
   cp -rv $GITHUB_WORKSPACE/patches/custom/package/dae ./package/
+  if [[ -f "package/dae/Makefile" ]]; then
+    rm -rf package/dae/Makefile && wget -O package/dae/Makefile https://raw.githubusercontent.com/davidtall/OpenWRT-CI/refs/heads/main/package/dae/Makefile
+  fi
   cp -rv $GITHUB_WORKSPACE/patches/custom/package/luci-app-dae ./package/
   echo "CONFIG_PACKAGE_luci-app-dae=y" >> $config_file
 }
@@ -288,6 +296,9 @@ function add_netspeedtest() {
 function add_wechatpush(){
   remove_package luci-app-wechatpush
   git clone --depth=1 -b master https://github.com/tty228/luci-app-wechatpush package/luci-app-wechatpush
+  # fix wechatpush build
+  git_sparse_clone main https://github.com/kiddin9/kwrt-packages \
+      wrtbwmon
   echo "CONFIG_PACKAGE_luci-app-wechatpush=y" >> $config_file
 }
 
@@ -302,14 +313,19 @@ function add_msd_lite() {
   remove_package msd_lite luci-app-msd_lite
   git_sparse_clone main https://github.com/kiddin9/kwrt-packages \
       msd_lite luci-app-msd_lite
-  echo "CONFIG_PACKAGE_luci-app-msd-lite=y" >> $config_file
+  
+  if [[ -f "package/msd_lite/Makefile" ]]; then
+    rm -rf package/msd_lite/Makefile && wget -O package/msd_lite/Makefile https://raw.githubusercontent.com/immortalwrt/packages/refs/heads/master/net/msd_lite/Makefile 
+  fi
+
+  echo "CONFIG_PACKAGE_luci-app-msd_lite=y" >> $config_file
 
 }
 
 # 主要执行程序
 # 解决配置文件未换行问题
 echo "" >> $config_file
-# add_dae
+add_dae
 add_daed
 set_theme
 add_nps
@@ -324,4 +340,4 @@ add_taskplan
 add_msd_lite
 add_other_package
 add_defaults_settings
-# generate_config && cat $config_file
+generate_config && cat $config_file

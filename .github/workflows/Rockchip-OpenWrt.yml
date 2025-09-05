@@ -246,7 +246,7 @@ jobs:
         OPENWRT_ARMVIRT: openwrt/bin/targets/*/*/*rootfs.tar.gz
         PACKAGE_SOC: r68s 
         WHOAMI: Caiwx
-        KERNEL_VERSION_NAME: 5.15.13_6.6.y
+        KERNEL_VERSION_NAME: 6.6.y_6.12.y
         KERNEL_AUTO_LATEST: true
         DISTRIB_REVISION: R${{ env.DATE1 }} by Caiwx 
         
@@ -256,36 +256,44 @@ jobs:
       with:
         name: Rockchip-Luci-Flippy
         path: ${{ env.PACKAGED_OUTPUTPATH }}
-        
-    - name: Upload OpenWrt To Release
-      if: env.PACKAGED_STATUS == 'success' && env.OPENWRT_RELEASE == 'true'
+
+    - name: Prepare Release Body
+      run: |
+        echo "云编译发布" > release_body.txt
+        echo "源码：${{ env.REPO_URL }}" >> release_body.txt
+        echo "Kernel: ${{ env.KERNEL }}" >> release_body.txt
+        echo "WIFI密码: 12345678" >> release_body.txt
+        echo "LAN地址: 10.0.10.1" >> release_body.txt
+        echo "**This is OpenWrt Firmware for ${{ env.FIRMWARE_TAG }}**" >> release_body.txt 
+        echo "### 📒 固件信息" >> release_body.txt
+        echo "- 💻 平台架构: ${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }} (rk33xx, rk35xx)" >> release_body.txt
+        echo "- ⚽ 固件源码: ${{ env.REPO_URL }}" >> release_body.txt
+        echo "- 💝 源码分支: ${{ env.REPO_BRANCH }}" >> release_body.txt
+        echo "- 🚀 内核版本: ${{ env.KERNEL }}" >> release_body.txt
+        echo "- 🌐 默认地址: 10.0.10.1" >> release_body.txt
+        echo "- 🔑 默认密码: password" >> release_body.txt
+        echo "### 🍻 安装与更新" >> release_body.txt
+        echo "- 用插件安装: 系统 → 晶晨宝盒 → 安装 OpenWrt → 选择型号 → 安装" >> release_body.txt
+        echo "- 用命令安装: U盘启动成功后输入命令 `openwrt-install-amlogic` 按照英文提示写入到 emmc" >> release_body.txt
+        echo "- 用插件更新: 系统 → 晶晨宝盒 → 在线下载更新 → 完整更新全系统" >> release_body.txt
+        echo "- 用命令更新: 上传固件到 `/mnt/mmcblk2p4` 目录，输入命令 `openwrt-update-amlogic` 即可更新" >> release_body.txt
+        echo "- 注意: 如非 `amlogic` 平台，请将其更改为对应平台 `rockchip` `allwinner`" >> release_body.txt
+        echo "- 部分常见问题及注意事项请参考恩山论坛F大➦[最新帖](https://www.right.com.cn/forum/thread-4076037-1-1.html)" >> release_body.txt
+        echo "### 🧊 固件版本" >> release_body.txt
+        echo "- 固件编译前最后一次➦[主源码](${{ env.REPO_URL }})更新记录" >> release_body.txt
+        echo "- ${{ env.COMMIT_AUTHOR }}" >> release_body.txt
+        echo "- ${{ env.COMMIT_DATE }}" >> release_body.txt
+        echo "- ${{ env.COMMIT_MESSAGE }}" >> release_body.txt
+        echo "- ${{ env.COMMIT_HASH }}" >> release_body.txt
+
+    - name: Upload Firmware To Release
+      if: steps.compile.outputs.status == 'success' && env.FIRMWARE_RELEASE == 'true'
       uses: ncipollo/release-action@v1
       with:
-        name: R${{ env.DATE }} for ${{ env.OPENWRT_TAG }}
+        name: R${{ env.DATE }} for ${{ env.FIRMWARE_TAG }}
         allowUpdates: true
-        tag: ${{ env.OPENWRT_TAG }}
+        tag: ${{ env.FIRMWARE_TAG }}
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*-flippy-*
-        body: |
-          **This is OpenWrt Firmware for ${{ env.FIRMWARE_TAG }}**
-          ### 📒 固件信息
-          - 💻 平台架构: ${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }} (rk33xx, rk35xx)
-          - ⚽ 固件源码: ${{ env.REPO_URL }}
-          - 💝 源码分支: ${{ env.REPO_BRANCH }}
-          - 🚀 内核版本: ${{ env.KERNEL }}
-          - 🌐 默认地址: 192.168.1.1
-          - 🔑 默认密码: password
-          ### 🍻 安装与更新
-          - 用插件安装: 系统 → 晶晨宝盒 → 安装 OpenWrt → 选择型号 → 安装
-          - 用命令安装: U盘启动成功后输入命令 `openwrt-install-amlogic` 按照英文提示写入到 emmc
-          - 用插件更新: 系统 → 晶晨宝盒 → 在线下载更新 → 完整更新全系统
-          - 用命令更新: 上传固件到 `/mnt/mmcblk2p4` 目录，输入命令 `openwrt-update-amlogic` 即可更新
-          - 注意: 如非 `amlogic` 平台，请将其更改为对应平台 `rockchip` `allwinner`
-          - 部分常见问题及注意事项请参考恩山论坛F大➦[最新帖](https://www.right.com.cn/forum/thread-4076037-1-1.html)
-          ### 🧊 固件版本
-          - 固件编译前最后一次➦[主源码](${{ env.REPO_URL }})更新记录
-          - ${{ env.COMMIT_AUTHOR }}
-          - ${{ env.COMMIT_DATE }}
-          - ${{ env.COMMIT_MESSAGE }}
-          - ${{ env.COMMIT_HASH }}
+        bodyFile: release_body.txt
         

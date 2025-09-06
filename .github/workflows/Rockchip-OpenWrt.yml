@@ -294,6 +294,6 @@ jobs:
         allowUpdates: true
         tag: ${{ env.FIRMWARE_TAG }}
         token: ${{ secrets.GITHUB_TOKEN }}
-        artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*-flippy-*
+        artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*
         bodyFile: release_body.txt
         

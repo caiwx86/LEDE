@@ -340,4 +340,4 @@ add_taskplan
 # add_msd_lite
 add_other_package
 add_defaults_settings
-generate_config && cat $config_file
+# generate_config && cat $config_file

@@ -275,6 +275,8 @@ function add_dae() {
 function add_geodata() {
   remove_package v2ray-geodata
   cp -rv $GITHUB_WORKSPACE/patches/custom/package/v2ray-geodata ./package/
+  echo "CONFIG_PACKAGE_v2ray-geoip=y" >> $config_file
+  echo "CONFIG_PACKAGE_v2ray-geosite=y" >> $config_file
   echo "CONFIG_PACKAGE_v2ray-geodata-updater=y" >> $config_file
   echo "CONFIG_PACKAGE_v2ray-geodata=y" >> $config_file
 }

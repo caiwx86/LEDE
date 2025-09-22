@@ -181,10 +181,10 @@ function add_daed() {
   git_sparse_clone master https://github.com/QiuSimons/luci-app-daed \
       daed luci-app-daed 
   #修复daed/Makefile
-  # if [ -f "package/daed/Makefile" ]; then
-  #    rm -rf package/daed/Makefile && cp -r $GITHUB_WORKSPACE/patches/custom/patch/daed/Makefile package/daed/
-  #    cat package/daed/Makefile
-  # fi
+  if [ -f "package/daed/Makefile" ]; then
+     rm -rf package/daed/Makefile && cp -r $GITHUB_WORKSPACE/scripts/custom/patch/daed/Makefile package/daed/
+     cat package/daed/Makefile
+  fi
   # 添加daed配置
   echo "CONFIG_PACKAGE_luci-app-daed=y" >> $config_file 
   # 解决luci-app-daed 依赖问题, 该问题存在于LEDE库
@@ -251,7 +251,7 @@ function add_adguardhome() {
   fi
   # 复制AdGuardHome相关文件
   echo "添加AdGuardHome相关文件"
-  cp $GITHUB_WORKSPACE/patches/custom/adguard_update_dhcp_leases.sh files/usr/bin/adguard_update_dhcp_leases.sh
+  cp $GITHUB_WORKSPACE/scripts/custom/adguard_update_dhcp_leases.sh files/usr/bin/adguard_update_dhcp_leases.sh
 }
 
 function add_defaults_settings() {
@@ -259,22 +259,22 @@ function add_defaults_settings() {
   if [[ ! -d "files/etc/uci-defaults" ]]; then
     mkdir -p files/etc/uci-defaults
   fi
-  cp $GITHUB_WORKSPACE/patches/custom/init-settings.sh files/etc/uci-defaults/99-init-settings
+  cp $GITHUB_WORKSPACE/scripts/custom/init-settings.sh files/etc/uci-defaults/99-init-settings
 }
 
 function add_dae() {
   remove_package dae luci-app-dae
-  cp -rv $GITHUB_WORKSPACE/patches/custom/package/dae ./package/
+  cp -rv $GITHUB_WORKSPACE/scripts/custom/package/dae ./package/
   if [[ -f "package/dae/Makefile" ]]; then
     rm -rf package/dae/Makefile && wget -O package/dae/Makefile https://raw.githubusercontent.com/davidtall/OpenWRT-CI/refs/heads/main/package/dae/Makefile
   fi
-  cp -rv $GITHUB_WORKSPACE/patches/custom/package/luci-app-dae ./package/
+  cp -rv $GITHUB_WORKSPACE/scripts/custom/package/luci-app-dae ./package/
   echo "CONFIG_PACKAGE_luci-app-dae=y" >> $config_file
 }
 
 function add_geodata() {
   remove_package v2ray-geodata
-  cp -rv $GITHUB_WORKSPACE/patches/custom/package/v2ray-geodata ./package/
+  cp -rv $GITHUB_WORKSPACE/scripts/custom/package/v2ray-geodata ./package/
   echo "CONFIG_PACKAGE_v2ray-geoip=y" >> $config_file
   echo "CONFIG_PACKAGE_v2ray-geosite=y" >> $config_file
   echo "CONFIG_PACKAGE_v2ray-geodata-updater=y" >> $config_file

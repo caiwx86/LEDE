@@ -149,9 +149,9 @@ function generate_config() {
   #增加ebpf
   cat_ebpf_config $config_file
   enable_skb_recycler $config_file
-  set_kernel_size
+  # set_kernel_size
   #增加内核选项
-  cat_kernel_config "target/linux/qualcommax/${target}/config-default"
+  # cat_kernel_config "target/linux/qualcommax/${target}/config-default"
 }
 
 # Git稀疏克隆，只克隆指定目录到本地
@@ -181,10 +181,10 @@ function add_daed() {
   git_sparse_clone master https://github.com/QiuSimons/luci-app-daed \
       daed luci-app-daed 
   #修复daed/Makefile
-  if [ -f "package/daed/Makefile" ]; then
-     rm -rf package/daed/Makefile && cp -r $GITHUB_WORKSPACE/scripts/custom/patch/daed/Makefile package/daed/
-     cat package/daed/Makefile
-  fi
+  # if [ -f "package/daed/Makefile" ]; then
+  #   rm -rf package/daed/Makefile && cp -r $GITHUB_WORKSPACE/scripts/custom/patch/daed/Makefile package/daed/
+  #   cat package/daed/Makefile
+  # fi
   # 添加daed配置
   echo "CONFIG_PACKAGE_luci-app-daed=y" >> $config_file 
   # 解决luci-app-daed 依赖问题, 该问题存在于LEDE库
@@ -342,4 +342,4 @@ add_taskplan
 # add_msd_lite
 add_other_package
 add_defaults_settings
-# generate_config && cat $config_file
+generate_config && cat $config_file
